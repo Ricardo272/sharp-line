@@ -10,7 +10,7 @@ require_once __DIR__ . '/../db.php';
 function prestations(): array
 {
     $lignes = db()->query(
-        'SELECT id, nom, description, duree_min, prix, est_option
+        'SELECT id, nom, description, duree_min, prix, est_option, motif_possible
          FROM prestations
          WHERE active = 1
          ORDER BY ordre, id'
@@ -24,5 +24,6 @@ function prestations(): array
         'duree'       => (int) $l['duree_min'],
         'prix'        => (float) $l['prix'],
         'option'      => (bool) $l['est_option'],
+        'motif_possible' => (bool) $l['motif_possible'],
     ], $lignes);
 }

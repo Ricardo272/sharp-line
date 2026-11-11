@@ -15,12 +15,12 @@ DELETE FROM prestations;
 
 
 -- Prestations (le motif est une option qui s'ajoute à une coupe)
-INSERT INTO prestations (id, nom, description, duree_min, prix, est_option, ordre) VALUES
-(1, 'Coupe homme',             'Ciseaux ou tondeuse, finitions au rasoir, coiffage.',              20, 20.00, 0, 1),
-(2, 'Coupe + barbe',           'La coupe complète, puis la barbe taillée et dessinée au rasoir.',  35, 25.00, 0, 2),
-(3, 'Taille de barbe',         'Longueur, contours nets, serviette chaude.',                       15, 10.00, 0, 3),
-(4, 'Coupe enfant (−12 ans)',  'Une coupe rapide et soignée, sans stress pour les plus petits.',   15, 15.00, 0, 4),
-(5, 'Motif / trait au rasoir', 'Un trait ou un motif dessiné sur le côté, en plus d''une coupe.',  5,  5.00, 1, 5);
+INSERT INTO prestations (id, nom, description, duree_min, prix, est_option, motif_possible, ordre) VALUES
+(1, 'Coupe homme',             'Ciseaux ou tondeuse, finitions au rasoir, coiffage.',              20, 20.00, 0, 1, 1),
+(2, 'Coupe + barbe',           'La coupe complète, puis la barbe taillée et dessinée au rasoir.',  35, 25.00, 0, 1, 2),
+(3, 'Taille de barbe',         'Longueur, contours nets, serviette chaude.',                       15, 10.00, 0, 0, 3),
+(4, 'Coupe enfant (−12 ans)',  'Une coupe rapide et soignée, sans stress pour les plus petits.',   15, 15.00, 0, 1, 4),
+(5, 'Motif / trait au rasoir', 'Un trait ou un motif dessiné sur le côté, en plus d''une coupe.',  5,  5.00, 1, 0, 5);
 
 
 -- Barbers (photos sans visage : mains, outils, poste)

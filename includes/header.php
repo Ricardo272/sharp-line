@@ -26,8 +26,8 @@
 <?php foreach ($site['navigation'] as $lien): ?>
                 <li><a class="nav__lien" href="<?= e(url($lien['url'])) ?>"<?= $lien['id'] === $pageId ? ' aria-current="page"' : '' ?>><?= e($lien['label']) ?></a></li>
 <?php endforeach; ?>
-<?php $rdv = $site['rendez_vous']; ?>
-                <li><a class="nav__lien nav__lien--rdv" href="<?= e(url($rdv['url'])) ?>"<?= $rdv['id'] === $pageId ? ' aria-current="page"' : '' ?>><?= e($rdv['label']) ?></a></li>
+<?php $lienRdv = $site['rendez_vous']; ?>
+                <li><a class="nav__lien nav__lien--rdv" href="<?= e(url($lienRdv['url'])) ?>"<?= $lienRdv['id'] === $pageId ? ' aria-current="page"' : '' ?>><?= e($lienRdv['label']) ?></a></li>
             </ul>
         </nav>
     </div>

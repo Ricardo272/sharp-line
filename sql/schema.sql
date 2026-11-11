@@ -20,15 +20,17 @@ DROP TABLE IF EXISTS prestations;
 -- Prestations
 -- Les prix sont en DECIMAL (valeur exacte), jamais en FLOAT (valeur approchée).
 -- est_option : s'ajoute à une coupe (motif au rasoir) au lieu d'être choisie seule.
+-- motif_possible : l'option motif peut s'ajouter à cette prestation (pas à la barbe seule).
 -- active = 0 : masquée du site, mais les anciens rendez-vous la gardent.
 -- --------------------------------------------------------------------------
 CREATE TABLE prestations (
-    id           SMALLINT UNSIGNED  NOT NULL AUTO_INCREMENT,
-    nom          VARCHAR(80)        NOT NULL,
-    description  VARCHAR(255)       NOT NULL DEFAULT '',
-    duree_min    TINYINT UNSIGNED   NOT NULL,            -- en minutes
-    prix         DECIMAL(6,2)       NOT NULL,
-    est_option   TINYINT(1)         NOT NULL DEFAULT 0,
+    id              SMALLINT UNSIGNED  NOT NULL AUTO_INCREMENT,
+    nom             VARCHAR(80)        NOT NULL,
+    description     VARCHAR(255)       NOT NULL DEFAULT '',
+    duree_min       TINYINT UNSIGNED   NOT NULL,            -- en minutes
+    prix            DECIMAL(6,2)       NOT NULL,
+    est_option      TINYINT(1)         NOT NULL DEFAULT 0,
+    motif_possible  TINYINT(1)         NOT NULL DEFAULT 1,
     ordre        TINYINT UNSIGNED   NOT NULL DEFAULT 0,  -- ordre d'affichage
     active       TINYINT(1)         NOT NULL DEFAULT 1,
     PRIMARY KEY (id)

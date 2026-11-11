@@ -186,6 +186,17 @@ function prix(float $montant): string
 }
 
 /**
+ * Date en français avec l'extension intl de PHP (active dans Laragon) :
+ *   dateLongue($d)            → « Mardi 12 novembre »
+ *   dateLongue($d, 'EEE d MMM') → « mar. 12 nov. »
+ */
+function dateLongue(DateTimeInterface $date, string $motif = 'EEEE d MMMM'): string
+{
+    $format = new IntlDateFormatter('fr_FR', IntlDateFormatter::FULL, IntlDateFormatter::NONE, 'Europe/Paris', null, $motif);
+    return ucfirst($format->format($date));
+}
+
+/**
  * « 14:30 » → « 14h30 » ; « 10:00 » → « 10h ».
  */
 function formaterHeure(string $heure): string
