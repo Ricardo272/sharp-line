@@ -31,8 +31,11 @@ require_once __DIR__ . '/includes/header.php';
             </p>
 
             <h2>Hébergement</h2>
-            <!-- shortcut: site encore en local ; coordonnées d'alwaysdata à mettre en phase 8 -->
-            <p>Le site est en cours de développement. L'hébergeur sera indiqué à la mise en ligne.</p>
+            <p>
+                ALWAYSDATA, SARL, RCS Paris 492 893 490<br>
+                91, rue du Faubourg Saint-Honoré, 75008 Paris<br>
+                <a href="https://www.alwaysdata.com" rel="noopener">www.alwaysdata.com</a>
+            </p>
 
             <h2>Propriété intellectuelle</h2>
             <p>
