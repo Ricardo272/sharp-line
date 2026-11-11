@@ -1,6 +1,7 @@
 <?php
 // Accueil : bannière néon, aperçu des prestations et de la galerie, appel au rendez-vous.
-$pageId = 'accueil';
+$pageId    = 'accueil';
+$pageSalon = true; // fiche « HairSalon » pour Google
 
 require_once __DIR__ . '/includes/head.php';
 require_once __DIR__ . '/includes/donnees/prestations.php';

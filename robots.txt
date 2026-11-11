@@ -1,0 +1,6 @@
+# Tout le site peut être exploré, sauf le tableau de bord.
+# shortcut: adresse locale, à remplacer par la vraie en phase 8 (mise en ligne).
+User-agent: *
+Disallow: /admin/
+
+Sitemap: http://sharp-line.test/sitemap.xml

@@ -93,6 +93,60 @@ function urlAbsolue(string $chemin = ''): string
 }
 
 /**
+ * Données structurées « HairSalon » (schema.org, format JSON-LD) : une fiche
+ * que Google lit pour afficher adresse, horaires, téléphone… Il n'existe pas
+ * de type « BarberShop » : HairSalon est le plus proche.
+ * Les horaires viennent de la base (horaires()).
+ */
+function donneesStructurees(array $site, array $horaires): string
+{
+    $joursAnglais = [1 => 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+    // Regroupe les jours par créneau : « 10:00-20:00 » => [Tuesday, Wednesday…]
+    $parCreneau = [];
+    foreach ($horaires as $jour => $creneaux) {
+        foreach ($creneaux as [$ouverture, $fermeture]) {
+            $parCreneau[$ouverture . '-' . $fermeture][] = $joursAnglais[$jour];
+        }
+    }
+
+    $ouvertures = [];
+    foreach ($parCreneau as $creneau => $jours) {
+        [$ouverture, $fermeture] = explode('-', $creneau);
+        $ouvertures[] = [
+            '@type'     => 'OpeningHoursSpecification',
+            'dayOfWeek' => $jours,
+            'opens'     => $ouverture,
+            'closes'    => $fermeture,
+        ];
+    }
+
+    $donnees = [
+        '@context'    => 'https://schema.org',
+        '@type'       => 'HairSalon',
+        'name'        => $site['nom'],
+        'description' => $site['description'],
+        'slogan'      => $site['slogan'],
+        'url'         => urlAbsolue(),
+        'image'       => urlAbsolue('assets/img/partage.jpg'),
+        'telephone'   => lienTelephone($site['telephone']),
+        'email'       => $site['email'],
+        'priceRange'  => '€',
+        'address'     => [
+            '@type'           => 'PostalAddress',
+            'streetAddress'   => $site['adresse']['rue'],
+            'postalCode'      => $site['adresse']['code_postal'],
+            'addressLocality' => $site['adresse']['ville'],
+            'addressCountry'  => 'FR',
+        ],
+        'openingHoursSpecification' => $ouvertures,
+    ];
+
+    // JSON_HEX_TAG : un « </script> » dans un texte ne pourrait pas fermer la balise
+    return json_encode($donnees, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_HEX_TAG);
+}
+
+/**
  * Adresse d'un fichier CSS, JS ou image, suivie de sa date de modification :
  * asset('assets/js/menu.js') → « /assets/js/menu.js?v=1762712345 ».
  * Quand le fichier change, l'adresse change : le navigateur ne peut plus

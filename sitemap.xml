@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Pages publiques du site, pour les moteurs de recherche.
+     Adresse locale : à remplacer par la vraie en phase 8 (mise en ligne). -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>http://sharp-line.test/</loc></url>
+  <url><loc>http://sharp-line.test/prestations.php</loc></url>
+  <url><loc>http://sharp-line.test/equipe.php</loc></url>
+  <url><loc>http://sharp-line.test/galerie.php</loc></url>
+  <url><loc>http://sharp-line.test/rendez-vous.php</loc></url>
+  <url><loc>http://sharp-line.test/contact.php</loc></url>
+  <url><loc>http://sharp-line.test/mentions-legales.php</loc></url>
+</urlset>

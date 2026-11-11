@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Sharp Line : carré anthracite, un trait bleu net en diagonale, un éclat violet -->
+  <rect width="32" height="32" rx="7" fill="#1E1F24"/>
+  <line x1="7" y1="25" x2="25" y2="7" stroke="#2D5BFF" stroke-width="4.5" stroke-linecap="round"/>
+  <circle cx="25" cy="7" r="3" fill="#8A3FFC"/>
+</svg>

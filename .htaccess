@@ -1,6 +1,5 @@
 # ==========================================================================
-# Configuration Apache du site (version minimale de la phase 1).
-# HTTPS, le cache, la compression et les en-têtes de sécurité arrivent en phase 6.
+# Configuration Apache du site
 # ==========================================================================
 
 # Page d'erreur maison pour toute adresse inconnue.
@@ -13,5 +12,70 @@ ErrorDocument 404 /404.php
 Options -Indexes
 
 # Dossiers internes : jamais accessibles depuis le navigateur.
+# includes/ : morceaux de page · config/ : identifiants, clé secrète
+# sql/ : structure de la base · outils/, tests/ : scripts en ligne de commande
 # On répond « 404 » plutôt que « 403 interdit » : inutile de signaler qu'ils existent.
 RedirectMatch 404 ^/(includes|config|sql|outils|tests)(/|$)
+
+
+# ==========================================================================
+# En-têtes de sécurité et cache du navigateur
+# ==========================================================================
+<IfModule mod_headers.c>
+    # nosniff         : le navigateur respecte le type annoncé (un .txt n'est pas exécuté comme script)
+    # Referrer-Policy : on ne transmet que le domaine aux sites extérieurs, pas l'adresse complète
+    # X-Frame-Options : le site ne peut pas être affiché dans un cadre sur un autre site
+    # Permissions-Policy : ni caméra, ni micro, ni position : le site n'en a pas besoin
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set X-Frame-Options "DENY"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+
+    # Politique de sécurité du contenu (CSP) : le navigateur refuse tout script,
+    # style, police ou image qui ne vient pas du site lui-même.
+    # - le seul script écrit dans la page (classe « js », includes/head.php) est
+    #   autorisé par son empreinte : si on le modifie, il faut recalculer l'empreinte :
+    #   printf "%s" "<le script>" | openssl dgst -sha256 -binary | openssl base64
+    # - data: pour les images de remplacement et la texture béton (SVG générés)
+    # - form-action : les formulaires ne peuvent envoyer que vers le site
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw='; style-src 'self'; img-src 'self' data:; font-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'"
+
+    # Les CSS, JS et images ont un numéro de version dans leur adresse (asset(), image()) :
+    # quand un fichier change, son adresse change. Le navigateur peut donc les garder un an.
+    <FilesMatch "\.(css|js|woff2|png|jpe?g|webp|avif)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    # Fichiers appelés par une adresse fixe (sans numéro de version) : une semaine
+    <FilesMatch "^(favicon\.svg|partage\.jpg)$">
+        Header set Cache-Control "public, max-age=604800"
+    </FilesMatch>
+</IfModule>
+
+
+# ==========================================================================
+# Compression des fichiers texte (HTML, CSS, JS, SVG…) avant l'envoi.
+# Les modules ne sont pas activés dans la configuration Apache par défaut de
+# Laragon : ces règles s'appliquent seulement là où ils existent (hébergeur).
+# ==========================================================================
+<IfModule mod_deflate.c>
+    <IfModule mod_filter.c>
+        AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml
+        AddOutputFilterByType DEFLATE application/javascript application/json application/xml
+        AddOutputFilterByType DEFLATE image/svg+xml
+    </IfModule>
+</IfModule>
+
+
+# ==========================================================================
+# HTTPS obligatoire en ligne. Pas en local (adresses en .test, sans certificat).
+# X-Forwarded-Proto : certains hébergeurs placent un relais (proxy) devant Apache ;
+# sans cette condition, la redirection tournerait en boucle chez eux.
+# ==========================================================================
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteCond %{HTTP_HOST} !\.test$ [NC]
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>

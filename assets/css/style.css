@@ -12,6 +12,7 @@
      9. Composants (boutons, filet, titres, cartes, grille, néon, tag)
     10. Pages (accueil, galerie, contact, 404…)
     11. Animations réduites
+    12. Impression
    Écrite « mobile d'abord » : les règles de base visent le téléphone,
    les @media (min-width) ajoutent la mise en page des grands écrans.
    ========================================================================== */
@@ -1489,5 +1490,36 @@ button.calendrier__jour:hover,
         animation-duration: .01ms !important;
         animation-iteration-count: 1 !important;
         scroll-behavior: auto !important;
+    }
+}
+
+
+/* ==========================================================================
+   12. Impression
+   Noir sur blanc, sans menu, néons, texture ni boutons : le tarif ou la
+   confirmation d'un rendez-vous s'impriment proprement.
+   ========================================================================== */
+@media print {
+    body,
+    .bloc-sombre,
+    .neon-bloc {
+        background: none;
+        color: #000;
+    }
+
+    .entete,
+    .bandeau-demo,
+    .lien-evitement,
+    .groupe-boutons,
+    .appel-rdv,
+    .pied,
+    .progression {
+        display: none;
+    }
+
+    * {
+        text-shadow: none !important;
+        box-shadow: none !important;
+        animation: none !important;
     }
 }
