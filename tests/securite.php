@@ -146,6 +146,7 @@ if (!str_ends_with(parse_url($base, PHP_URL_HOST), '.test')) {
     $http = requete('http://' . parse_url($base, PHP_URL_HOST) . '/');
     verifier('http redirigé vers https', $http['code'] === 301 && str_starts_with($http['entetes']['location'] ?? '', 'https://'));
     verifier('aucune erreur PHP visible', !preg_match('/(Warning|Notice|Fatal error|Deprecated)/', $accueil['corps']));
+    verifier('cookie du tableau de bord : Secure (HTTPS seulement)', stripos(pageConnexion($base)[2], 'secure') !== false);
 }
 
 echo $echecs === 0 ? "\nTous les tests passent.\n" : "\n$echecs test(s) en échec.\n";
