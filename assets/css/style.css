@@ -1106,15 +1106,23 @@ a:hover {
     border-radius: var(--rayon);
 }
 
+/* Chaque choix : l'intitulé au-dessus, puis la valeur et « Modifier » sur une ligne.
+   Tient aussi bien en pleine largeur que dans la colonne étroite du bureau. */
 .recap > div {
     display: grid;
-    grid-template-columns: 7rem 1fr auto;
-    gap: .25rem var(--espace-s);
+    grid-template-columns: 1fr auto;
+    gap: 0 var(--espace-s);
     align-items: baseline;
 }
 
+.recap > div + div {
+    padding-top: .5rem;
+    border-top: 1px solid rgb(30 31 36 / .12);
+}
+
 .recap dt {
-    font-size: .8rem;
+    grid-column: 1 / -1;
+    font-size: .75rem;
     font-weight: 700;
     letter-spacing: .1em;
     text-transform: uppercase;
@@ -1129,19 +1137,27 @@ a:hover {
     font-size: .9rem;
 }
 
-/* Confirmation : pas de colonne « modifier » */
-.recap > div:not(:has(dd + dd)) {
-    grid-template-columns: 7rem 1fr;
+/* Mise en page : récapitulatif à gauche en bureau, collé en haut au défilement */
+.rdv--deux-colonnes .recap {
+    margin-bottom: var(--espace-m);
 }
 
-@media (max-width: 30em) {
-    .recap > div,
-    .recap > div:not(:has(dd + dd)) {
-        grid-template-columns: 1fr auto;
+@media (min-width: 60em) {
+    .rdv--deux-colonnes {
+        display: grid;
+        grid-template-columns: 17rem 1fr;
+        gap: var(--espace-l);
+        align-items: start;
     }
 
-    .recap dt {
-        grid-column: 1 / -1;
+    .rdv__recap {
+        position: sticky;
+        top: var(--espace-s);
+    }
+
+    /* Sans ça, la bande des jours (qui défile) élargirait la colonne hors de l'écran */
+    .rdv__etape {
+        min-width: 0;
     }
 }
 
@@ -1234,19 +1250,31 @@ a:hover {
     accent-color: var(--bleu);
 }
 
-/* Jours : petites cartes, 3 par ligne en mobile */
+/* Jours : une seule bande qui défile horizontalement.
+   scroll-snap : chaque pastille s'arrête bien en place sous le doigt.
+   Le masque estompe le bord droit pour montrer qu'il y a une suite. */
 .jours {
-    display: grid;
-    gap: .5rem;
-    grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
-    padding: 0;
+    display: flex;
+    gap: .4rem;
+    margin-bottom: var(--espace-l);
+    padding: 0 0 .6rem;
     list-style: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: .25rem;
+    -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+    mask-image: linear-gradient(90deg, #000 85%, transparent);
+}
+
+.jours li {
+    flex: none;
+    scroll-snap-align: start;
 }
 
 .jour {
     display: grid;
-    width: 100%;
-    padding: .6rem .25rem;
+    width: 4.5rem;
+    padding: .45rem .25rem;
     background: none;
     border: 1px solid rgb(30 31 36 / .35);
     border-radius: var(--rayon);
@@ -1262,44 +1290,92 @@ a:hover {
     color: #fff;
 }
 
+/* Jour choisi : plein anthracite, trait bleu dessous */
+.jour[aria-current="date"] {
+    background-color: var(--anthracite);
+    border-color: var(--anthracite);
+    color: var(--beton);
+    box-shadow: inset 0 -4px 0 var(--bleu);
+}
+
 .jour__nom {
-    font-size: .8rem;
+    font-size: .7rem;
     font-weight: 700;
     text-transform: uppercase;
 }
 
 .jour__date {
     font-family: var(--police-titre);
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     line-height: 1.1;
 }
 
-/* Créneaux : une ligne par heure */
-.creneaux {
-    display: grid;
-    gap: var(--espace-s);
+/* Heures : une ligne repliée par heure, les minutes s'ouvrent au clic */
+.heures {
+    border-top: 1px solid rgb(30 31 36 / .2);
 }
 
-.creneaux__ligne {
-    display: grid;
-    grid-template-columns: 3rem 1fr;
-    gap: var(--espace-s);
-    align-items: start;
+.heure {
+    border-bottom: 1px solid rgb(30 31 36 / .2);
 }
 
-.creneaux__heure {
-    padding-top: .35rem;
+.heure summary {
+    display: flex;
+    align-items: center;
+    gap: var(--espace-s);
+    padding: .7rem .25rem;
+    list-style: none; /* retire le triangle par défaut… */
+    cursor: pointer;
+}
+
+.heure summary::-webkit-details-marker {
+    display: none; /* …y compris dans Safari */
+}
+
+/* Chevron dessiné en CSS, qui pivote quand la ligne est ouverte */
+.heure summary::after {
+    content: "";
+    width: .55rem;
+    height: .55rem;
+    margin-left: auto;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform .2s;
+}
+
+.heure[open] summary::after {
+    transform: rotate(-135deg);
+}
+
+.heure summary:hover .heure__h,
+.heure[open] .heure__h {
+    color: var(--bleu);
+}
+
+.heure__h {
+    width: 3rem;
     font-family: var(--police-titre);
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     line-height: 1;
 }
 
-.creneaux__liste {
+.heure__nb {
+    font-size: .9rem;
+}
+
+.heure__liste {
     display: flex;
     flex-wrap: wrap;
     gap: .4rem;
-    padding: 0;
+    padding: 0 0 var(--espace-s) calc(3rem + var(--espace-s));
     list-style: none;
+}
+
+@media (max-width: 30em) {
+    .heure__liste {
+        padding-left: 0;
+    }
 }
 
 .creneau {

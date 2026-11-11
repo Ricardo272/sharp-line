@@ -13,6 +13,7 @@ require_once __DIR__ . '/includes/rendez-vous.php';
 $pageId          = 'rendez-vous';
 $pageTitle       = 'Prendre rendez-vous';
 $pageDescription = 'Réserve ta coupe chez Sharp Line à Belleville : choisis ta prestation, ton barber et ton créneau.';
+$pageJs          = 'rendez-vous'; // amène le jour choisi au centre de la bande (confort, pas indispensable)
 
 function rediriger(string $adresse): never
 {
@@ -135,7 +136,11 @@ require_once __DIR__ . '/includes/header.php';
 <?php endforeach; ?>
             </ol>
 
+            <!-- Bureau : récapitulatif à gauche (reste visible), étape à droite.
+                 Mobile : l'un au-dessus de l'autre. -->
+            <div class="rdv<?= $etat['etape'] > 1 ? ' rdv--deux-colonnes' : '' ?>">
 <?php if ($etat['etape'] > 1): ?>
+            <aside class="rdv__recap" aria-label="Tes choix">
             <!-- Choix déjà faits, chacun avec un lien pour revenir en arrière -->
             <dl class="recap">
                 <div>
@@ -157,12 +162,14 @@ require_once __DIR__ . '/includes/header.php';
                 <div>
                     <dt>Rendez-vous</dt>
                     <dd><?= e(dateLongue($etat['jour'])) ?> à <?= e(formaterHeure($etat['heure'])) ?></dd>
-                    <dd><a href="<?= e($adresse(parametresChoix($etat, 3))) ?>">Modifier<span class="visuellement-cache"> le jour et l'heure</span></a></dd>
+                    <dd><a href="<?= e($adresse(parametresChoix($etat, 4))) ?>">Modifier<span class="visuellement-cache"> le jour et l'heure</span></a></dd>
                 </div>
 <?php endif; ?>
             </dl>
+            </aside>
 <?php endif; ?>
 
+            <div class="rdv__etape">
 <?php if ($message !== null): ?>
             <p class="alerte" role="alert"><?= e($message) ?></p>
 <?php endif; ?>
@@ -216,8 +223,8 @@ require_once __DIR__ . '/includes/header.php';
                 </ul>
             </form>
 
-<?php elseif ($etat['etape'] === 3 && $etat['jour'] === null): ?>
-            <!-- ------------------------------------------ 3a. Jour -->
+<?php elseif ($etat['etape'] === 3): ?>
+            <!-- ------------------------------------------ 3. Jour puis heure (même écran) -->
             <form class="etape" method="get" action="<?= e(url('rendez-vous.php')) ?>">
 <?php foreach (parametresChoix($etat, 3) as $nom => $val): ?>
                 <input type="hidden" name="<?= e($nom) ?>" value="<?= e((string) $val) ?>">
@@ -226,10 +233,12 @@ require_once __DIR__ . '/includes/header.php';
 <?php if ($etat['jours'] === []): ?>
                 <p>Aucun jour disponible dans les trois prochaines semaines. Appelle-nous au <?= e($site['telephone']) ?>.</p>
 <?php else: ?>
+                <!-- Une seule bande qui défile horizontalement ; le jour choisi reste en surbrillance -->
                 <ul class="jours" role="list">
-<?php foreach ($etat['jours'] as $cle => $jour): ?>
+<?php foreach ($etat['jours'] as $cle => $jour): $choisi = $etat['jour'] && $cle === $etat['jour']->format('Y-m-d'); ?>
                     <li>
-                        <button class="jour" type="submit" name="jour" value="<?= e($cle) ?>" aria-label="<?= e(dateLongue($jour)) ?>">
+                        <button class="jour" type="submit" name="jour" value="<?= e($cle) ?>"
+                                aria-label="<?= e(dateLongue($jour)) ?>"<?= $choisi ? ' aria-current="date"' : '' ?>>
                             <span class="jour__nom"><?= e(dateLongue($jour, 'EEE')) ?></span>
                             <span class="jour__date"><?= e(dateLongue($jour, 'd MMM')) ?></span>
                         </button>
@@ -239,17 +248,13 @@ require_once __DIR__ . '/includes/header.php';
 <?php endif; ?>
             </form>
 
-<?php elseif ($etat['etape'] === 3): ?>
-            <!-- ------------------------------------------ 3b. Heure -->
+<?php if ($etat['jour'] !== null): ?>
             <form class="etape" method="get" action="<?= e(url('rendez-vous.php')) ?>">
 <?php foreach (parametresChoix($etat, 4) as $nom => $val): ?>
                 <input type="hidden" name="<?= e($nom) ?>" value="<?= e((string) $val) ?>">
 <?php endforeach; ?>
                 <h2 class="etape__titre">Choisis ton heure</h2>
-                <p class="etape__aide">
-                    <?= e(dateLongue($etat['jour'])) ?> ·
-                    <a href="<?= e($adresse(parametresChoix($etat, 3))) ?>">Changer de jour</a>
-                </p>
+                <p class="etape__aide"><?= e(dateLongue($etat['jour'])) ?></p>
 <?php if ($etat['journee']['libres'] === []): ?>
                 <p>Plus aucun créneau libre ce jour-là. Choisis un autre jour.</p>
 <?php else: ?>
@@ -260,20 +265,25 @@ require_once __DIR__ . '/includes/header.php';
         $parHeure[(int) substr($creneau, 0, 2)][] = $creneau;
     }
 ?>
-                <div class="creneaux">
-<?php foreach ($parHeure as $h => $creneaux): ?>
-                    <div class="creneaux__ligne">
-                        <p class="creneaux__heure"><?= $h ?>h</p>
-                        <ul class="creneaux__liste" role="list">
+                <!-- Une ligne repliée par heure (<details> : natif, sans JavaScript) -->
+                <div class="heures">
+<?php foreach ($parHeure as $h => $creneaux): $nb = count($creneaux); ?>
+                    <details class="heure">
+                        <summary>
+                            <span class="heure__h"><?= $h ?>h</span>
+                            <span class="heure__nb"><?= $nb ?> créneau<?= $nb > 1 ? 'x' : '' ?> libre<?= $nb > 1 ? 's' : '' ?></span>
+                        </summary>
+                        <ul class="heure__liste" role="list">
 <?php foreach ($creneaux as $creneau): ?>
                             <li><button class="creneau" type="submit" name="heure" value="<?= e($creneau) ?>"><?= e(str_replace(':', 'h', $creneau)) ?></button></li>
 <?php endforeach; ?>
                         </ul>
-                    </div>
+                    </details>
 <?php endforeach; ?>
                 </div>
 <?php endif; ?>
             </form>
+<?php endif; ?>
 
 <?php else: ?>
             <!-- ------------------------------------------ 4. Coordonnées -->
@@ -327,6 +337,8 @@ require_once __DIR__ . '/includes/header.php';
                 </p>
             </form>
 <?php endif; ?>
+            </div><!-- .rdv__etape -->
+            </div><!-- .rdv -->
 <?php endif; ?>
 
         </div>
