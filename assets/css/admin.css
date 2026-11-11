@@ -234,6 +234,18 @@
     line-height: 1.45;
 }
 
+/* Ligne visée par l'adresse (#rdv-12, après une annulation) : repérée d'un contour,
+   avec un peu d'air au-dessus quand le navigateur y défile */
+.rdv-ligne {
+    scroll-margin-top: var(--espace-l);
+}
+
+.rdv-ligne:target {
+    outline: 2px solid var(--bleu);
+    outline-offset: 4px;
+    border-radius: var(--rayon);
+}
+
 /* Annulé : barré et estompé, le créneau est libre */
 .rdv-ligne--annule .rdv-ligne__heure,
 .rdv-ligne--annule .rdv-ligne__infos {

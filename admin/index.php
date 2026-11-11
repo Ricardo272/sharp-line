@@ -38,7 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     annulerRendezVous($id)
         ? flash('Rendez-vous annulé : le créneau est de nouveau libre. Pense à prévenir le client.')
         : flash('Ce rendez-vous était déjà annulé.', 'erreur');
-    rediriger('admin/?' . http_build_query($parametres()));
+    // #rdv-12 : le navigateur revient sur la ligne annulée au lieu du haut de la page
+    rediriger('admin/?' . http_build_query($parametres()) . '#rdv-' . $id);
 }
 
 // --- Période affichée ---
@@ -74,7 +75,7 @@ function ligneRendezVous(array $r, bool $avecBarber, string $maintenant, string 
     $heure = formaterHeure(substr($r['debut'], 11, 5));
     $annule = $r['statut'] === 'annule';
     ob_start(); ?>
-                <li class="rdv-ligne<?= $annule ? ' rdv-ligne--annule' : '' ?>">
+                <li class="rdv-ligne<?= $annule ? ' rdv-ligne--annule' : '' ?>" id="rdv-<?= (int) $r['id'] ?>">
                     <p class="rdv-ligne__heure"><?= e($heure) ?></p>
                     <div class="rdv-ligne__infos">
                         <p><strong><?= e($r['prenom']) ?></strong><?= $avecBarber ? ' · avec ' . e($r['barber']) : '' ?><?= $annule ? ' <span class="rdv-ligne__statut">annulé</span>' : '' ?></p>
