@@ -9,7 +9,8 @@
      6. Bandeau démo
      7. Pied de page
      8. Utilitaires
-     9. Animations réduites
+     9. Accueil
+    10. Animations réduites
    Écrite « mobile d'abord » : les règles de base visent le téléphone,
    les @media (min-width) ajoutent la mise en page des grands écrans.
    ========================================================================== */
@@ -499,7 +500,67 @@ a:hover {
 
 
 /* ==========================================================================
-   9. Animations réduites
+   9. Accueil
+   ========================================================================== */
+
+/* Mobile : texte puis image, l'une sous l'autre */
+.intro {
+    display: grid;
+    gap: var(--espace-l);
+    align-items: center;
+}
+
+.intro__slogan {
+    margin-block: var(--espace-s) var(--espace-m);
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.intro__atouts {
+    display: grid;
+    gap: var(--espace-xs);
+    margin-bottom: var(--espace-m);
+    padding: 0;
+    list-style: none;
+}
+
+/* Chaque atout précédé d'un trait bleu, comme un coup de tondeuse */
+.intro__atouts li {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    font-weight: 500;
+}
+
+.intro__atouts li::before {
+    content: "";
+    flex: none;
+    width: 1.5rem;
+    height: 3px;
+    background-color: var(--bleu);
+}
+
+.intro__image {
+    width: 100%;
+    max-width: 16rem;  /* l'image ne mange plus tout l'écran */
+    justify-self: center;
+}
+
+/* Bureau : deux colonnes, texte plus large que l'image */
+@media (min-width: 48em) {
+    .intro {
+        grid-template-columns: 1.3fr 1fr;
+    }
+
+    .intro__image {
+        max-width: 22rem;
+        justify-self: end;
+    }
+}
+
+
+/* ==========================================================================
+   10. Animations réduites
    Si le visiteur a demandé moins d'animations dans son système, on les coupe.
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
