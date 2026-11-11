@@ -9,8 +9,9 @@
      6. Bandeau démo
      7. Pied de page
      8. Utilitaires
-     9. Accueil
-    10. Animations réduites
+     9. Composants (boutons, filet, titres, cartes, grille, néon, tag)
+    10. Accueil
+    11. Animations réduites
    Écrite « mobile d'abord » : les règles de base visent le téléphone,
    les @media (min-width) ajoutent la mise en page des grands écrans.
    ========================================================================== */
@@ -500,7 +501,258 @@ a:hover {
 
 
 /* ==========================================================================
-   9. Accueil
+   9. Composants
+   ========================================================================== */
+
+/* --- Boutons ------------------------------------------------------------ */
+.bouton {
+    display: inline-block;
+    padding: .85rem 1.5rem;
+    background-color: var(--bleu);
+    border: 2px solid var(--bleu);
+    border-radius: var(--rayon);
+    color: #fff; /* blanc sur bleu : 5,2:1 */
+    font: 600 1rem/1.2 var(--police-texte);
+    letter-spacing: .06em;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color .2s, border-color .2s, box-shadow .2s;
+}
+
+.bouton:hover {
+    background-color: var(--violet);
+    border-color: var(--violet);
+}
+
+/* Secondaire : simple bordure, prend la couleur du texte autour */
+.bouton--contour {
+    background-color: transparent;
+    border-color: currentColor;
+    color: inherit;
+}
+
+.bouton--contour:hover {
+    background-color: transparent;
+    border-color: var(--bleu);
+}
+
+/* Dans un bloc sombre, les boutons s'allument */
+.bloc-sombre .bouton,
+.neon-bloc .bouton {
+    box-shadow: 0 0 16px rgb(45 91 255 / .6);
+}
+
+.bloc-sombre .bouton:hover,
+.neon-bloc .bouton:hover {
+    box-shadow: 0 0 18px rgb(138 63 252 / .75);
+}
+
+.bloc-sombre .bouton--contour,
+.neon-bloc .bouton--contour {
+    box-shadow: none;
+}
+
+.groupe-boutons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espace-s);
+}
+
+/* --- Filet « dégradé de coiffeur » --------------------------------------
+   Un trait plein qui se défait en rayures puis s'efface, comme un dégradé
+   à la tondeuse. Deux fonds superposés : le trait plein (35 % à gauche) et
+   les rayures ; le masque estompe le tout vers la droite. */
+.filet {
+    --filet-couleur: var(--bleu);
+    width: min(16rem, 70%);
+    height: 4px;
+    margin-block: var(--espace-m);
+    border: 0;
+    background:
+        linear-gradient(90deg, var(--filet-couleur) 0 35%, transparent 35%),
+        repeating-linear-gradient(90deg, var(--filet-couleur) 0 7px, transparent 7px 12px);
+    -webkit-mask-image: linear-gradient(90deg, #000 45%, transparent);
+    mask-image: linear-gradient(90deg, #000 45%, transparent);
+}
+
+.filet--centre {
+    margin-inline: auto;
+    /* centré : le dégradé part du milieu vers les deux bords */
+    background:
+        linear-gradient(90deg, transparent 32%, var(--filet-couleur) 32% 68%, transparent 68%),
+        repeating-linear-gradient(90deg, var(--filet-couleur) 0 7px, transparent 7px 12px);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 30% 70%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 30% 70%, transparent);
+}
+
+.bloc-sombre .filet,
+.neon-bloc .filet {
+    --filet-couleur: var(--violet);
+}
+
+/* --- Titre de section --------------------------------------------------- */
+.surtitre {
+    margin-bottom: var(--espace-xs);
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+}
+
+.titre-section {
+    margin-bottom: var(--espace-l);
+}
+
+.titre-section h2 {
+    max-width: 20ch;
+}
+
+/* --- Grille : 1 à 4 colonnes selon la place, sans media query ------------
+   Chaque colonne fait au moins 16rem ; min(100%, …) évite un débordement
+   sur un écran plus étroit que 16rem. */
+.grille {
+    display: grid;
+    gap: var(--espace-m);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    padding: 0;
+    list-style: none;
+}
+
+/* --- Cartes : bordure fine et sobre ------------------------------------- */
+.carte {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espace-xs);
+    height: 100%;
+    padding: var(--espace-m);
+    border: 1px solid rgb(30 31 36 / .25);
+    border-radius: var(--rayon);
+    transition: border-color .2s;
+}
+
+.carte:hover {
+    border-color: var(--bleu);
+}
+
+.carte__titre {
+    font-size: 1.75rem;
+}
+
+/* Carte prestation : nom, durée, prix */
+.carte-prestation__duree {
+    font-size: .9rem;
+    font-weight: 500;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.carte-prestation__prix {
+    margin-top: auto; /* le prix se cale en bas : alignés d'une carte à l'autre */
+    font-family: var(--police-titre);
+    font-size: 3rem;
+    line-height: 1;
+}
+
+/* Option (motif au rasoir) : bordure en pointillés, s'ajoute à une coupe */
+.carte-prestation--option {
+    border-style: dashed;
+}
+
+/* Carte barber : photo en haut, collée aux bords */
+.carte-barber {
+    padding: 0;
+    overflow: hidden;
+}
+
+.carte-barber img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 0;
+}
+
+.carte-barber__texte {
+    display: grid;
+    gap: .25rem;
+    padding: var(--espace-m);
+}
+
+.carte-barber__role {
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+}
+
+/* --- Bloc signature néon -------------------------------------------------
+   Un bloc anthracite entouré de deux « tubes » : bleu (bordure) et violet
+   (pseudo-élément décalé vers l'intérieur). Il grésille une fois à l'arrivée. */
+.neon-bloc {
+    position: relative;
+    padding: var(--espace-l) var(--espace-m);
+    background-color: var(--anthracite);
+    color: var(--beton);
+    border: 2px solid var(--bleu);
+    border-radius: 10px;
+    box-shadow:
+        0 0 12px rgb(45 91 255 / .8),
+        0 0 32px rgb(45 91 255 / .4),
+        inset 0 0 14px rgb(45 91 255 / .5);
+    text-align: center;
+    animation: neon-allumage 1.4s ease-out both;
+}
+
+.neon-bloc::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border: 2px solid var(--violet);
+    border-radius: 6px;
+    box-shadow:
+        0 0 10px rgb(138 63 252 / .8),
+        inset 0 0 10px rgb(138 63 252 / .5);
+    pointer-events: none; /* ne bloque pas les clics sur les boutons */
+}
+
+.neon-texte {
+    font-family: var(--police-titre);
+    font-size: var(--taille-h2);
+    text-shadow: var(--neon-bleu);
+}
+
+/* Allumage d'un néon : quelques ratés, puis la lumière tient */
+@keyframes neon-allumage {
+    0%, 12%, 22%, 30% { opacity: .35; }
+    8%, 18%, 26%, 100% { opacity: 1; }
+}
+
+/* --- Tag -----------------------------------------------------------------
+   Permanent Marker : UNIQUEMENT « Line » (logo) et « à toi » (slogan). */
+.tag {
+    display: inline-block;
+    font-family: var(--police-tag);
+    font-size: 1.1em;
+    text-transform: none;
+    transform: rotate(-5deg);
+}
+
+/* Sur fond sombre, le tag brille en violet */
+.neon-bloc .tag,
+.bloc-sombre .tag {
+    text-shadow: var(--neon-violet);
+}
+
+@media (min-width: 48em) {
+    .neon-bloc {
+        padding-inline: var(--espace-l);
+    }
+}
+
+
+/* ==========================================================================
+   10. Accueil
    ========================================================================== */
 
 /* Mobile : texte puis image, l'une sous l'autre */
@@ -560,7 +812,7 @@ a:hover {
 
 
 /* ==========================================================================
-   10. Animations réduites
+   11. Animations réduites
    Si le visiteur a demandé moins d'animations dans son système, on les coupe.
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {

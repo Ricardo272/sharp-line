@@ -147,6 +147,16 @@ function imageRemplacement(string $chemin, string $alt, int $largeur, int $haute
 }
 
 /**
+ * Prix à la française : 20 → « 20 € » ; 12.5 → « 12,50 € ».
+ * L'espace avant « € » est insécable : le symbole ne part jamais seul à la ligne.
+ */
+function prix(float $montant): string
+{
+    $decimales = floor($montant) == $montant ? 0 : 2;
+    return number_format($montant, $decimales, ',', "\u{202F}") . "\u{00A0}€";
+}
+
+/**
  * « 14:30 » → « 14h30 » ; « 10:00 » → « 10h ».
  */
 function formaterHeure(string $heure): string
