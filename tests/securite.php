@@ -5,14 +5,15 @@
  *
  *   php tests/securite.php
  *
- * Code de sortie 1 si un test échoue. Ne crée aucune donnée.
+ * Code de sortie 1 si un test échoue. Crée un compte d'administration
+ * jetable (« test-securite ») pour tester la connexion, puis le supprime.
  */
 
 if (PHP_SAPI !== 'cli') {
     exit('À lancer en ligne de commande.');
 }
 
-require_once __DIR__ . '/../includes/helpers.php';
+require_once __DIR__ . '/../includes/db.php';
 
 $base = rtrim(configLocale()['url_absolue'], '/');
 $echecs = 0;
@@ -28,15 +29,16 @@ function verifier(string $nom, bool $condition): void
  * Requête HTTP sans suivre les redirections.
  * Retourne ['code' => 200, 'entetes' => ['content-type' => '…'], 'corps' => '…'].
  */
-function requete(string $adresse, ?array $post = null): array
+function requete(string $adresse, ?array $post = null, string $cookie = ''): array
 {
-    $options = ['ignore_errors' => true, 'follow_location' => 0, 'timeout' => 10];
+    $options = ['ignore_errors' => true, 'follow_location' => 0, 'timeout' => 10, 'header' => ''];
+    if ($cookie !== '') {
+        $options['header'] .= "Cookie: $cookie\r\n";
+    }
     if ($post !== null) {
-        $options += [
-            'method'  => 'POST',
-            'header'  => 'Content-Type: application/x-www-form-urlencoded',
-            'content' => http_build_query($post),
-        ];
+        $options['method']  = 'POST';
+        $options['header'] .= "Content-Type: application/x-www-form-urlencoded\r\n";
+        $options['content'] = http_build_query($post);
     }
     $corps = @file_get_contents($adresse, false, stream_context_create(['http' => $options]));
     $lignes = $http_response_header ?? [];
@@ -83,6 +85,59 @@ verifier('choix invalides : aucune redirection vers une confirmation',
     !str_contains($robot['entetes']['location'] ?? '', 'confirmation='));
 verifier('lien de confirmation trafiqué : refusé',
     str_contains(requete($base . '/rendez-vous.php?confirmation=1.abc')['corps'], 'Lien introuvable'));
+
+echo "Tableau de bord\n";
+verifier('/admin/ sans connexion : renvoie vers la connexion',
+    str_contains(requete($base . '/admin/')['entetes']['location'] ?? '', 'admin/connexion.php'));
+
+/** Ouvre la page de connexion : retourne [cookie de session, jeton CSRF]. */
+function pageConnexion(string $base): array
+{
+    $r = requete($base . '/admin/connexion.php');
+    preg_match('/name="csrf" value="([0-9a-f]+)"/', $r['corps'], $m);
+    return [explode(';', $r['entetes']['set-cookie'] ?? '')[0], $m[1] ?? '', $r['entetes']['set-cookie'] ?? ''];
+}
+
+[$cookie, $csrf, $setCookie] = pageConnexion($base);
+verifier('cookie limité à /admin/, HttpOnly, SameSite=Strict',
+    stripos($setCookie, 'path=/admin/') !== false && stripos($setCookie, 'httponly') !== false
+    && stripos($setCookie, 'samesite=strict') !== false);
+verifier('connexion sans jeton CSRF : refusée (400)',
+    requete($base . '/admin/connexion.php', ['identifiant' => 'x', 'mot_de_passe' => 'y'], $cookie)['code'] === 400);
+
+// Compte jetable, mot de passe aléatoire jamais affiché
+$motDePasse = bin2hex(random_bytes(12));
+db()->prepare('DELETE FROM admins WHERE identifiant = ?')->execute(['test-securite']);
+db()->prepare('INSERT INTO admins (identifiant, mot_de_passe) VALUES (?, ?)')
+    ->execute(['test-securite', password_hash($motDePasse, PASSWORD_DEFAULT)]);
+
+try {
+    $connexion = requete($base . '/admin/connexion.php',
+        ['csrf' => $csrf, 'identifiant' => 'test-securite', 'mot_de_passe' => $motDePasse], $cookie);
+    $nouveau = explode(';', $connexion['entetes']['set-cookie'] ?? '')[0];
+    verifier('bonne connexion : redirection vers l\'agenda', str_ends_with($connexion['entetes']['location'] ?? '', '/admin/'));
+    verifier('nouvel identifiant de session après connexion', $nouveau !== '' && $nouveau !== $cookie);
+    verifier('agenda accessible une fois connecté', str_contains(requete($base . '/admin/', null, $nouveau)['corps'], 'Agenda'));
+    verifier('annulation sans jeton CSRF : refusée (400)',
+        requete($base . '/admin/', ['annuler' => '1'], $nouveau)['code'] === 400);
+
+    // 5 mauvais mots de passe : compte bloqué, même avec le bon ensuite
+    $resultat = '';
+    for ($i = 1; $i <= 5; $i++) {
+        [$c, $j] = pageConnexion($base);
+        $resultat = requete($base . '/admin/connexion.php',
+            ['csrf' => $j, 'identifiant' => 'test-securite', 'mot_de_passe' => 'faux-' . $i], $c)['corps'];
+    }
+    verifier('5 échecs : compte bloqué', str_contains($resultat, 'Trop de tentatives'));
+    [$c, $j] = pageConnexion($base);
+    verifier('bloqué : même le bon mot de passe est refusé', str_contains(requete($base . '/admin/connexion.php',
+        ['csrf' => $j, 'identifiant' => 'test-securite', 'mot_de_passe' => $motDePasse], $c)['corps'], 'Trop de tentatives'));
+    [$c, $j] = pageConnexion($base);
+    verifier('identifiant inconnu : même message qu\'un mauvais mot de passe', str_contains(requete($base . '/admin/connexion.php',
+        ['csrf' => $j, 'identifiant' => 'inconnu-' . bin2hex(random_bytes(4)), 'mot_de_passe' => 'x'], $c)['corps'], 'Identifiant ou mot de passe incorrect'));
+} finally {
+    db()->prepare('DELETE FROM admins WHERE identifiant = ?')->execute(['test-securite']);
+}
 
 if (!str_ends_with(parse_url($base, PHP_URL_HOST), '.test')) {
     echo "En ligne\n";

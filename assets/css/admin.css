@@ -1,0 +1,341 @@
+/* ==========================================================================
+   Tableau de bord (admin/) : chargé après style.css, dont il reprend
+   couleurs, polices, boutons, champs et cartes. Pensé d'abord pour le
+   téléphone : l'agenda se consulte entre deux clients.
+   ========================================================================== */
+
+/* --- En-tête --- */
+.admin-entete {
+    background-color: var(--anthracite);
+    color: var(--beton);
+    border-bottom: 2px solid var(--bleu);
+}
+
+.admin-entete__interieur {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--espace-xs) var(--espace-m);
+    padding-block: var(--espace-s);
+}
+
+.admin-entete__nom {
+    font-family: var(--police-titre);
+    font-size: 1.75rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    text-shadow: var(--neon-bleu);
+}
+
+.admin-entete__nom span {
+    font-family: var(--police-texte);
+    font-size: .75rem;
+    letter-spacing: .15em;
+    text-shadow: none;
+    opacity: .75;
+}
+
+/* Le menu passe sous le nom sur mobile */
+.admin-entete__nav {
+    order: 3;
+    flex-basis: 100%;
+}
+
+.admin-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--espace-m);
+    padding: 0;
+    list-style: none;
+}
+
+.admin-nav a {
+    display: inline-block;
+    padding-block: .5rem;
+    border-bottom: 2px solid transparent;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.admin-nav a:hover,
+.admin-nav a[aria-current="page"] {
+    border-bottom-color: var(--bleu);
+}
+
+.admin-entete__deconnexion button {
+    min-height: 2.75rem;
+    padding: .4rem .8rem;
+    background: none;
+    border: 1px solid rgb(230 228 224 / .4);
+    border-radius: var(--rayon);
+    color: var(--beton);
+    font: 600 .85rem var(--police-texte);
+    cursor: pointer;
+}
+
+@media (min-width: 60em) {
+    .admin-entete__nav {
+        order: 0;
+        flex-basis: auto;
+    }
+}
+
+/* --- Page --- */
+.admin-page {
+    padding-block: var(--espace-m) var(--espace-xl);
+}
+
+.admin-titre {
+    margin-bottom: var(--espace-s);
+    font-size: 2.75rem;
+}
+
+.admin-aide {
+    margin-bottom: var(--espace-m);
+    font-size: .95rem;
+}
+
+.admin-bloc {
+    margin-bottom: var(--espace-l);
+}
+
+/* Message après une action : trait bleu (réussite) ou violet (attention) */
+.flash {
+    margin-bottom: var(--espace-m);
+    padding: var(--espace-s) var(--espace-m);
+    border: 1px solid var(--bleu);
+    border-left-width: 6px;
+    border-radius: var(--rayon);
+    font-weight: 500;
+}
+
+.flash--erreur {
+    border-color: var(--violet);
+}
+
+/* --- Filtres (Jour / Semaine, barbers) : pastilles --- */
+.filtres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espace-xs) var(--espace-m);
+    margin-bottom: var(--espace-m);
+}
+
+.filtres__liste {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+    padding: 0;
+    list-style: none;
+}
+
+.filtres__liste a {
+    display: inline-block;
+    padding: .45rem .8rem;
+    border: 1px solid rgb(30 31 36 / .35);
+    border-radius: 999px;
+    font-size: .9rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.filtres__liste a[aria-current] {
+    background-color: var(--anthracite);
+    border-color: var(--anthracite);
+    color: var(--beton);
+}
+
+/* --- Navigation dans le temps : ← titre → --- */
+.periode {
+    display: grid;
+    grid-template-columns: 2.75rem 1fr 2.75rem;
+    gap: var(--espace-xs);
+    align-items: center;
+    margin-bottom: var(--espace-m);
+    text-align: center;
+}
+
+.periode__fleche {
+    display: grid;
+    place-items: center;
+    height: 2.75rem;
+    border: 1px solid rgb(30 31 36 / .35);
+    border-radius: var(--rayon);
+    font-size: 1.25rem;
+    text-decoration: none;
+}
+
+.periode__fleche:hover {
+    border-color: var(--bleu);
+}
+
+.periode__titre {
+    font-size: 1.6rem;
+}
+
+/* --- Agenda --- */
+.agenda-barber,
+.agenda-jour {
+    margin-bottom: var(--espace-m);
+}
+
+.agenda-barber__nom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+    padding-bottom: .3rem;
+    border-bottom: 2px solid var(--anthracite);
+    font-size: 1.6rem;
+}
+
+.agenda-barber__nom a {
+    text-decoration: none;
+}
+
+.agenda-barber__absent {
+    padding: .1rem .5rem;
+    border: 1px solid var(--violet);
+    border-radius: 999px;
+    font-family: var(--police-texte);
+    font-size: .75rem;
+    text-transform: none;
+}
+
+.agenda-vide {
+    padding-block: .6rem;
+    opacity: .7;
+}
+
+.rdv-liste {
+    padding: 0;
+    list-style: none;
+}
+
+/* Une ligne : heure | infos | bouton */
+.rdv-ligne {
+    display: grid;
+    grid-template-columns: 4rem 1fr auto;
+    gap: var(--espace-s);
+    align-items: start;
+    padding-block: .7rem;
+    border-bottom: 1px solid rgb(30 31 36 / .15);
+}
+
+.rdv-ligne__heure {
+    font-family: var(--police-titre);
+    font-size: 1.5rem;
+    line-height: 1.1;
+}
+
+.rdv-ligne__infos {
+    font-size: .95rem;
+    line-height: 1.45;
+}
+
+/* Annulé : barré et estompé, le créneau est libre */
+.rdv-ligne--annule .rdv-ligne__heure,
+.rdv-ligne--annule .rdv-ligne__infos {
+    opacity: .5;
+    text-decoration: line-through;
+}
+
+.rdv-ligne__statut {
+    display: inline-block;
+    text-decoration: none;
+    font-size: .8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.bouton-petit {
+    min-height: 2.75rem;
+    padding: .4rem .7rem;
+    background: none;
+    border: 1px solid var(--violet);
+    border-radius: var(--rayon);
+    color: inherit;
+    font: 600 .85rem var(--police-texte);
+    cursor: pointer;
+}
+
+.bouton-petit:hover {
+    background-color: var(--violet);
+    color: #fff;
+}
+
+/* --- Prestations : une carte par prestation --- */
+.admin-cartes {
+    display: grid;
+    gap: var(--espace-s);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    margin-bottom: var(--espace-m);
+}
+
+.admin-prestation {
+    margin: 0;
+}
+
+.admin-prestation legend {
+    padding-inline: .3rem;
+    font-family: var(--police-titre);
+    text-transform: uppercase;
+}
+
+.admin-prestation__champs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--espace-s);
+}
+
+.admin-prestation .champ {
+    margin-bottom: var(--espace-xs);
+}
+
+.admin-prestation .case {
+    margin: 0;
+}
+
+/* --- Champs propres au tableau de bord --- */
+.champ select {
+    width: 100%;
+    padding: .7rem .8rem;
+    background-color: rgb(255 255 255 / .55);
+    border: 1px solid rgb(30 31 36 / .5);
+    border-radius: var(--rayon);
+    color: var(--anthracite);
+    font: inherit;
+}
+
+.champ__facultatif {
+    font-weight: 400;
+    opacity: .75;
+}
+
+/* --- Connexion : le bloc néon au centre --- */
+.connexion {
+    display: grid;
+    place-items: center;
+    min-height: 80vh;
+}
+
+.connexion__boite {
+    width: min(100%, 24rem);
+    text-align: left;
+}
+
+.connexion__boite .neon-texte {
+    text-align: center;
+}
+
+.connexion__titre {
+    margin-bottom: var(--espace-m);
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+/* Champs sur fond sombre */
+.connexion .champ input {
+    background-color: rgb(230 228 224 / .95);
+}

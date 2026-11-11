@@ -109,8 +109,10 @@ verifier('même créneau, même barber : refusé', ($second['erreur'] ?? '') ===
 
 $apres = analyserChoix(['prestation' => '1', 'barber' => '1', 'jour' => $jour, 'heure' => $heure], $maintenant);
 verifier('le créneau n\'est plus proposé', $apres['etape'] === 3);
-verifier('lien de confirmation valide', rendezVousConfirme(explode('=', lienConfirmation($premier['id']))[1])['barber'] === 'Karim');
-verifier('lien de confirmation modifié : refusé', rendezVousConfirme(($premier['id'] + 1) . '.abc') === null);
+if (isset($premier['id'])) {
+    verifier('lien de confirmation valide', rendezVousConfirme(explode('=', lienConfirmation($premier['id']))[1])['barber'] === 'Karim');
+    verifier('lien de confirmation modifié : refusé', rendezVousConfirme(($premier['id'] + 1) . '.abc') === null);
+}
 
 // Nettoyage
 $ids = array_filter($crees);

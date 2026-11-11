@@ -116,6 +116,34 @@ function verifierJeton(string $jeton, ?int $maintenant = null): string
 
 
 /* ==========================================================================
+   Prix (tableau de bord)
+   ========================================================================== */
+
+/**
+ * « 18,50 », « 19 € », « 19.5 » → 18.5 / 19 / 19.5 ; null si invalide (ou 0, ou 1000 et plus).
+ */
+function lirePrix(string $saisie): ?float
+{
+    $nettoye = str_replace([',', '€', ' ', "\u{00A0}", "\u{202F}"], ['.', '', '', '', ''], trim($saisie));
+
+    if (!preg_match('/^\d{1,3}(\.\d{1,2})?$/', $nettoye) || (float) $nettoye <= 0) {
+        return null;
+    }
+
+    return (float) $nettoye;
+}
+
+/**
+ * Prix pour remplir un champ : 18.5 → « 18,50 » ; 19 → « 19 ».
+ */
+function prixPourChamp(float|string $prix): string
+{
+    $prix = (float) $prix;
+    return floor($prix) == $prix ? (string) (int) $prix : number_format($prix, 2, ',', '');
+}
+
+
+/* ==========================================================================
    Téléphone
    ========================================================================== */
 
