@@ -173,7 +173,7 @@ require_once __DIR__ . '/includes/header.php';
 <?php endif; ?>
 
 <?php if ($etat['etape'] === 1): ?>
-            <!-- ------------------------------------------ 1. Prestation -->
+            <!-- ========================================== 1. Prestation -->
             <form class="etape" method="get" action="<?= e(url('rendez-vous.php')) ?>">
                 <h2 class="etape__titre">Choisis ta prestation</h2>
                 <ul class="choix-liste" role="list">
@@ -190,7 +190,7 @@ require_once __DIR__ . '/includes/header.php';
             </form>
 
 <?php elseif ($etat['etape'] === 2): ?>
-            <!-- ------------------------------------------ 2. Barber (+ motif) -->
+            <!-- ========================================== 2. Barber (+ motif) -->
             <form class="etape" method="get" action="<?= e(url('rendez-vous.php')) ?>">
                 <input type="hidden" name="prestation" value="<?= e((string) $etat['prestation']['id']) ?>">
 <?php if ($etat['prestation']['motif_possible'] && $etat['option']): ?>
@@ -222,7 +222,7 @@ require_once __DIR__ . '/includes/header.php';
             </form>
 
 <?php elseif ($etat['etape'] === 3): ?>
-            <!-- ------------------------------------------ 3. Jour puis heure (même écran) -->
+            <!-- ========================================== 3. Jour puis heure (même écran) -->
             <form class="etape" method="get" action="<?= e(url('rendez-vous.php')) ?>">
 <?php foreach (parametresChoix($etat, 3) as $nom => $val): ?>
                 <input type="hidden" name="<?= e($nom) ?>" value="<?= e((string) $val) ?>">
@@ -292,7 +292,7 @@ require_once __DIR__ . '/includes/header.php';
 <?php endif; ?>
 
 <?php else: ?>
-            <!-- ------------------------------------------ 4. Coordonnées -->
+            <!-- ========================================== 4. Coordonnées -->
             <form class="etape formulaire" method="post" action="<?= e(url('rendez-vous.php')) ?>">
                 <h2 class="etape__titre">Tes coordonnées</h2>
 
