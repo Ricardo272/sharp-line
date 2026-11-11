@@ -16,6 +16,35 @@ if (PHP_SAPI !== 'cli' && !str_ends_with($_SERVER['HTTP_HOST'] ?? '', '.test')) 
 $site = require __DIR__ . '/../config/site.php';
 
 /**
+ * Toute erreur non prévue (base injoignable, requête en échec…) arrive ici.
+ * On écrit le message dans le journal, jamais à l'écran : il peut contenir
+ * des détails techniques. On ne journalise pas la trace complète, qui peut
+ * contenir les arguments des fonctions (et donc le mot de passe de la base).
+ */
+set_exception_handler(function (Throwable $erreur) use ($site): void {
+    error_log('[Sharp Line] ' . get_class($erreur) . ' : ' . $erreur->getMessage());
+
+    if (PHP_SAPI === 'cli') {
+        fwrite(STDERR, 'Erreur : ' . $erreur->getMessage() . PHP_EOL);
+        exit(1);
+    }
+
+    // On jette le début de page déjà produit mais pas encore envoyé (tampon de sortie)
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+
+    // Rien d'envoyé au navigateur : vraie page 503. Sinon, un simple message.
+    if (!headers_sent()) {
+        http_response_code(503);
+        header('Retry-After: 300');
+        require __DIR__ . '/erreur-503.php';
+    } else {
+        echo '<p class="bandeau-demo">Une erreur est survenue, réessaie dans quelques minutes.</p>';
+    }
+});
+
+/**
  * Configuration locale (config/config.local.php) : adresse du site,
  * identifiants de la base, clé secrète. Lue une seule fois, puis gardée en mémoire.
  */

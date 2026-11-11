@@ -3,7 +3,7 @@
  * Appel final « Prendre rendez-vous » dans le bloc néon signature.
  * Repris en bas de l'accueil, des prestations et de l'équipe.
  */
-$horairesRdv = resumerHoraires($site['horaires']);
+$horairesRdv = resumerHoraires(horaires());
 ?>
 <section class="section bloc-sombre" aria-labelledby="appel-rdv-titre">
     <div class="conteneur">

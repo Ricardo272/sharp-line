@@ -8,7 +8,7 @@ $pageDescription = 'Sharp Line, 12 passage des Graffeurs, Paris 20e, métro Bell
 require_once __DIR__ . '/includes/head.php';
 require_once __DIR__ . '/includes/header.php';
 
-$horaires = resumerHoraires($site['horaires']);
+$horaires = resumerHoraires(horaires());
 // Lien externe vers le quartier réel (la rue, elle, est inventée) : métro Belleville
 $lienCarte = 'https://www.openstreetmap.org/?mlat=48.87224&mlon=2.37669#map=17/48.87224/2.37669';
 ?>

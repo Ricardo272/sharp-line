@@ -35,18 +35,7 @@ return [
     // Le domaine .test est réservé : il ne peut appartenir à personne.
     'email'     => 'contact@sharpline.test',
 
-    // Horaires par jour, numérotés comme date('N') en PHP : 1 = lundi … 7 = dimanche.
-    // Chaque jour contient une liste de créneaux [ouverture, fermeture] ; vide = fermé.
-    // shortcut: horaires fixes ici en phase 1, ils passeront en base en phase 4.
-    'horaires' => [
-        1 => [],
-        2 => [['10:00', '20:00']],
-        3 => [['10:00', '20:00']],
-        4 => [['10:00', '20:00']],
-        5 => [['10:00', '20:00']],
-        6 => [['09:00', '19:00']],
-        7 => [],
-    ],
+    // Les horaires sont en base (table « horaires », modifiables depuis le tableau de bord).
 
     // Liens du menu principal. « id » permet de repérer la page en cours.
     'navigation' => [

@@ -2,7 +2,7 @@
 /**
  * Pied de page commun (bloc sombre), puis fermeture du <body>.
  */
-$horaires = resumerHoraires($site['horaires']);
+$horaires = resumerHoraires(horaires());
 ?>
 <footer class="pied">
     <div class="conteneur pied__grille">

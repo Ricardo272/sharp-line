@@ -9,6 +9,12 @@
  *   $pageNoIndex     true pour demander aux moteurs de ne pas indexer la page
  */
 require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/donnees/horaires.php';
+
+// Lus ici, AVANT tout affichage : si la base ne répond pas, la page 503
+// peut encore s'afficher proprement (voir helpers.php). Gardés en mémoire
+// pour le pied de page et l'appel au rendez-vous.
+horaires();
 
 $pageId          = $pageId ?? '';
 $pageDescription = $pageDescription ?? $site['description'];
