@@ -32,7 +32,7 @@ $apercuGalerie     = array_slice(galerie(), 0, 4);
                     <a class="bouton bouton--contour" href="<?= e(url('prestations.php')) ?>">Nos prestations</a>
                 </div>
             </div>
-            <?= image('accueil/banniere.jpg', 'Dégradé net vu de dos, sous la lumière des néons', 720, 900, 'banniere__image', true) ?>
+            <?= image('accueil/banniere.jpg', 'Coupe au peigne et aux ciseaux, vue de dos', 720, 900, 'banniere__image', true) ?>
         </div>
     </section>
 

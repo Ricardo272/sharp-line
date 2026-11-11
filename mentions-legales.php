@@ -41,9 +41,26 @@ require_once __DIR__ . '/includes/header.php';
                 SIL Open Font License 1.1, la police Permanent Marker sous licence Apache 2.0.
             </p>
             <p>
-                Les photographies sont en attente : les emplacements affichent des images de
-                remplacement. Leurs auteurs seront crédités ici.
+                Photographies sous <a href="https://unsplash.com/license" rel="noopener">licence Unsplash</a>,
+                d'autres lieux et d'autres personnes que ceux de ce salon fictif :
             </p>
+            <ul>
+                <li>Bannière d'accueil : <a href="https://unsplash.com/photos/YDOc9F6HUFA" rel="noopener">Tá Focando</a></li>
+                <li>Postes de Karim et contour de la nuque : <a href="https://unsplash.com/photos/45qPJ3QtTAg" rel="noopener">Jonathan Cooper</a>, <a href="https://unsplash.com/photos/sS3qRFsKZlg" rel="noopener">Jonathan Cooper</a></li>
+                <li>Poste d'Inès : <a href="https://unsplash.com/photos/jDYiNFLHw6Y" rel="noopener">Zlobniyy</a></li>
+                <li>Poste de Tony : <a href="https://unsplash.com/photos/WbEibGKHBMY" rel="noopener">Sinval Carvalho</a></li>
+                <li>Dégradé de dos : <a href="https://unsplash.com/photos/vI3m5UnZ0aQ" rel="noopener">Chris Knight</a></li>
+                <li>Boucles de dos : <a href="https://unsplash.com/photos/zd34nkm8nEk" rel="noopener">Ursula Castillo</a></li>
+                <li>Arches néon (et image de partage) : <a href="https://unsplash.com/photos/Alw5pVQYG4c" rel="noopener">Emanuel Haas</a></li>
+                <li>Coupe courte : <a href="https://unsplash.com/photos/9mDU8BxZVkA" rel="noopener">George Huffman</a></li>
+                <li>Tondeuses : <a href="https://unsplash.com/photos/Znyjl9pbaUs" rel="noopener">Agustin Fernandez</a></li>
+                <li>Cheveux bouclés : <a href="https://unsplash.com/photos/3pqA-K__dbQ" rel="noopener">Tamas Pap</a></li>
+                <li>Fauteuil : <a href="https://unsplash.com/photos/OOKPHqAICKA" rel="noopener">Caio Coelho</a></li>
+                <li>Rasoir et blaireau : <a href="https://unsplash.com/photos/FvKpUZCbZ-s" rel="noopener">Josh Sorenson</a></li>
+                <li>Trousse : <a href="https://unsplash.com/photos/2y4qGxu-4Do" rel="noopener">YearOne</a></li>
+                <li>Ciseaux : <a href="https://unsplash.com/photos/Xb_6OTCCnXo" rel="noopener">František Čaník</a></li>
+                <li>Lignes de néon : <a href="https://unsplash.com/photos/L_rNhnpWkD0" rel="noopener">Bappie</a></li>
+            </ul>
 
             <h2>Données personnelles</h2>
             <p>

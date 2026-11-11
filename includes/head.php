@@ -53,7 +53,6 @@ $urlCanonique = urlAbsolue($fichierPage === 'index.php' ? '' : $fichierPage);
     <meta property="og:title" content="<?= e($titreComplet) ?>">
     <meta property="og:description" content="<?= e($pageDescription) ?>">
     <meta property="og:url" content="<?= e($urlCanonique) ?>">
-    <!-- shortcut: partage.jpg n'existe pas encore, une photo recadrée en 1200 × 630 arrive en phase 8 -->
     <meta property="og:image" content="<?= e(urlAbsolue('assets/img/partage.jpg')) ?>">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">

@@ -27,13 +27,13 @@ INSERT INTO prestations (id, nom, description, duree_min, prix, est_option, moti
 INSERT INTO barbers (id, prenom, role, specialite, phrase, photo, photo_alt, ordre) VALUES
 (1, 'Karim', 'Fondateur', 'Dégradés et contours au rasoir',
     'Le rasoir, c''est sa signature : chaque contour tombe au millimètre.',
-    'equipe/karim.jpg', 'Les mains de Karim tenant un rasoir droit', 1),
+    'equipe/karim.jpg', 'Rasoir droit posé sur le poste de Karim', 1),
 (2, 'Inès', 'Barber', 'Coupes texturées, cheveux bouclés et crépus',
     'Elle travaille la texture au lieu de la combattre.',
-    'equipe/ines.jpg', 'Peigne afro et ciseaux posés sur le poste d''Inès', 2),
+    'equipe/ines.jpg', 'Ciseaux et peignes sur le poste d''Inès', 2),
 (3, 'Tony', 'Barber', 'Coupes enfants et ados',
     'Patient avec les plus petits, précis avec les plus grands.',
-    'equipe/tony.jpg', 'Tondeuse posée sur le poste de Tony', 3);
+    'equipe/tony.jpg', 'Tondeuse et sabots sur le poste de Tony', 3);
 
 
 -- Horaires : mardi–vendredi 10h–20h, samedi 9h–19h, fermé dimanche et lundi
