@@ -9,6 +9,16 @@ PHP 8 et MySQL, sans framework · Projet de portfolio de Ricardo Remond
 > Barber shop urbain à Belleville (Paris 20e) : Karim, Inès et Tony, dégradés au rasoir,
 > cheveux bouclés et crépus, coupes enfants. Les personnes, l'adresse et le téléphone sont inventés.
 
+![Page d'accueil : bannière anthracite, titre en néon bleu, slogan signé d'un tag violet](docs/captures/accueil.jpg)
+
+| Prise de rendez-vous (mobile) | Agenda du tableau de bord (mobile) |
+|---|---|
+| <img src="docs/captures/rendez-vous-mobile.jpg" alt="Choix du jour dans un mini-calendrier, puis des heures repliées par ligne" width="300"> | <img src="docs/captures/admin-agenda-mobile.jpg" alt="Agenda du jour par barber, avec un rendez-vous annulé barré" width="300"> |
+
+| Galerie | Contact et plan d'accès en SVG |
+|---|---|
+| ![Galerie : coupes de dos, outils, fauteuil et néons](docs/captures/galerie.jpg) | ![Contact : adresse, horaires et plan dessiné en SVG](docs/captures/contact.jpg) |
+
 ---
 
 ## Ce que fait le site
