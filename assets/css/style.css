@@ -1250,40 +1250,53 @@ a:hover {
     accent-color: var(--bleu);
 }
 
-/* Jours : une seule bande qui défile horizontalement.
-   scroll-snap : chaque pastille s'arrête bien en place sous le doigt.
-   Le masque estompe le bord droit pour montrer qu'il y a une suite. */
-.jours {
-    display: flex;
-    gap: .4rem;
-    margin-bottom: var(--espace-l);
-    padding: 0 0 .6rem;
-    list-style: none;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: .25rem;
-    -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
-    mask-image: linear-gradient(90deg, #000 85%, transparent);
+/* Mini-calendrier : 7 colonnes du lundi au dimanche, cases de 44 px (taille du doigt) */
+.calendrier__mois {
+    margin-bottom: .4rem;
+    font-weight: 700;
 }
 
-.jours li {
-    flex: none;
-    scroll-snap-align: start;
-}
-
-.jour {
+.calendrier__semaine,
+.calendrier {
     display: grid;
-    width: 4.5rem;
-    padding: .45rem .25rem;
+    grid-template-columns: repeat(7, 2.75rem);
+    gap: .3rem;
+}
+
+.calendrier__semaine {
+    margin-bottom: .3rem;
+    font-size: .75rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.calendrier {
+    margin-bottom: var(--espace-l);
+    padding: 0;
+    list-style: none;
+}
+
+.calendrier__jour {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
     background: none;
     border: 1px solid rgb(30 31 36 / .35);
     border-radius: var(--rayon);
     color: inherit;
-    font: inherit;
+    font: 500 1rem var(--police-texte);
     cursor: pointer;
 }
 
-.jour:hover,
+/* Passé, fermé ou trop loin : grisé, sans bordure */
+.calendrier__jour--indispo {
+    border-color: transparent;
+    opacity: .35;
+    cursor: default;
+}
+
+button.calendrier__jour:hover,
 .creneau:hover {
     border-color: var(--bleu);
     background-color: var(--bleu);
@@ -1291,23 +1304,11 @@ a:hover {
 }
 
 /* Jour choisi : plein anthracite, trait bleu dessous */
-.jour[aria-current="date"] {
+.calendrier__jour[aria-current="date"] {
     background-color: var(--anthracite);
     border-color: var(--anthracite);
     color: var(--beton);
     box-shadow: inset 0 -4px 0 var(--bleu);
-}
-
-.jour__nom {
-    font-size: .7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
-.jour__date {
-    font-family: var(--police-titre);
-    font-size: 1.2rem;
-    line-height: 1.1;
 }
 
 /* Heures : une ligne repliée par heure, les minutes s'ouvrent au clic */

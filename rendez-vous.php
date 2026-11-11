@@ -13,8 +13,6 @@ require_once __DIR__ . '/includes/rendez-vous.php';
 $pageId          = 'rendez-vous';
 $pageTitle       = 'Prendre rendez-vous';
 $pageDescription = 'Réserve ta coupe chez Sharp Line à Belleville : choisis ta prestation, ton barber et ton créneau.';
-$pageJs          = 'rendez-vous'; // amène le jour choisi au centre de la bande (confort, pas indispensable)
-
 function rediriger(string $adresse): never
 {
     header('Location: ' . $adresse, true, 303); // 303 : la page suivante est lue en GET
@@ -233,17 +231,25 @@ require_once __DIR__ . '/includes/header.php';
 <?php if ($etat['jours'] === []): ?>
                 <p>Aucun jour disponible dans les trois prochaines semaines. Appelle-nous au <?= e($site['telephone']) ?>.</p>
 <?php else: ?>
-                <!-- Une seule bande qui défile horizontalement ; le jour choisi reste en surbrillance -->
-                <ul class="jours" role="list">
-<?php foreach ($etat['jours'] as $cle => $jour): $choisi = $etat['jour'] && $cle === $etat['jour']->format('Y-m-d'); ?>
-                    <li>
-                        <button class="jour" type="submit" name="jour" value="<?= e($cle) ?>"
-                                aria-label="<?= e(dateLongue($jour)) ?>"<?= $choisi ? ' aria-current="date"' : '' ?>>
-                            <span class="jour__nom"><?= e(dateLongue($jour, 'EEE')) ?></span>
-                            <span class="jour__date"><?= e(dateLongue($jour, 'd MMM')) ?></span>
-                        </button>
-                    </li>
-<?php endforeach; ?>
+<?php
+    // Mini-calendrier : du lundi de cette semaine au dimanche de la dernière semaine proposée
+    $premierJour = $maintenant->setTime(0, 0)->modify('monday this week');
+    $dernierJour = $maintenant->setTime(0, 0)->modify('+' . (RDV_HORIZON_JOURS - 1) . ' days')->modify('sunday this week');
+    $mois = array_unique([dateLongue(reset($etat['jours']), 'MMMM'), dateLongue(end($etat['jours']), 'MMMM')]);
+?>
+                <p class="calendrier__mois"><?= e(ucfirst(implode(' – ', array_map('mb_strtolower', $mois)))) ?></p>
+                <div class="calendrier__semaine" aria-hidden="true">
+                    <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                </div>
+                <ul class="calendrier" role="list">
+<?php for ($jour = $premierJour; $jour <= $dernierJour; $jour = $jour->modify('+1 day')): $cle = $jour->format('Y-m-d'); ?>
+<?php if (isset($etat['jours'][$cle])): $choisi = $etat['jour'] && $cle === $etat['jour']->format('Y-m-d'); ?>
+                    <li><button class="calendrier__jour" type="submit" name="jour" value="<?= e($cle) ?>"
+                                aria-label="<?= e(dateLongue($jour)) ?>"<?= $choisi ? ' aria-current="date"' : '' ?>><?= $jour->format('j') ?></button></li>
+<?php else: // passé, fermé ou trop loin : simple chiffre grisé, ignoré par les lecteurs d'écran ?>
+                    <li><span class="calendrier__jour calendrier__jour--indispo" aria-hidden="true"><?= $jour->format('j') ?></span></li>
+<?php endif; ?>
+<?php endfor; ?>
                 </ul>
 <?php endif; ?>
             </form>
