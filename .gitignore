@@ -1,0 +1,11 @@
+# Adresse du site, identifiants de la base, clé secrète : jamais dans Git
+config/config.local.php
+
+# Fichiers système
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Éditeurs
+.vscode/
+.idea/

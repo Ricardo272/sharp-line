@@ -1,0 +1,514 @@
+/* ==========================================================================
+   Sharp Line — feuille de style unique
+   Sommaire :
+     1. Polices
+     2. Variables
+     3. Base (remise à zéro légère)
+     4. Mise en page
+     5. En-tête et navigation
+     6. Bandeau démo
+     7. Pied de page
+     8. Utilitaires
+     9. Animations réduites
+   Écrite « mobile d'abord » : les règles de base visent le téléphone,
+   les @media (min-width) ajoutent la mise en page des grands écrans.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. Polices hébergées localement (licences dans assets/fonts/licences/)
+   font-display: swap → le texte s'affiche tout de suite dans une police de
+   secours, puis la vraie police la remplace dès qu'elle est chargée.
+   ========================================================================== */
+
+/* Titres (licence OFL) */
+@font-face {
+    font-family: "Bebas Neue";
+    src: url("../fonts/bebas-neue-latin-400-normal.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Texte : police variable, toutes les graisses de 300 à 700 dans un fichier (licence OFL) */
+@font-face {
+    font-family: "Space Grotesk";
+    src: url("../fonts/space-grotesk-latin-wght-normal.woff2") format("woff2");
+    font-weight: 300 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Tag : UNIQUEMENT pour un ou deux mots signatures (licence Apache 2.0) */
+@font-face {
+    font-family: "Permanent Marker";
+    src: url("../fonts/permanent-marker-latin-400-normal.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+/* ==========================================================================
+   2. Variables
+   ========================================================================== */
+:root {
+    /* Les 4 couleurs du site, et rien d'autre */
+    --beton:      #E6E4E0;  /* fond clair */
+    --anthracite: #1E1F24;  /* texte, blocs sombres */
+    --bleu:       #2D5BFF;  /* accent 1 */
+    --violet:     #8A3FFC;  /* accent 2 */
+    /* Contraste : bleu et violet ne passent pas le seuil de lisibilité pour du
+       petit texte (ni sur béton, ni sur anthracite). Ils servent aux lueurs,
+       aux traits et aux fonds de boutons ; le texte reste béton ou anthracite,
+       et blanc (seule exception) sur un fond bleu ou violet. */
+
+    /* Polices */
+    --police-titre: "Bebas Neue", "Arial Narrow", Impact, sans-serif;
+    --police-texte: "Space Grotesk", "Segoe UI", Arial, sans-serif;
+    --police-tag:   "Permanent Marker", "Comic Sans MS", cursive;
+
+    /* Tailles fluides : grandissent avec l'écran, entre un minimum et un maximum */
+    --taille-texte: 1.0625rem;
+    --taille-h1: clamp(2.75rem, 8vw + 1rem, 6rem);
+    --taille-h2: clamp(2rem, 4vw + 1rem, 3.5rem);
+    --taille-h3: 1.5rem;
+
+    /* Espacements */
+    --espace-xs: .5rem;
+    --espace-s:  1rem;
+    --espace-m:  1.5rem;
+    --espace-l:  clamp(2.5rem, 6vw, 4rem);
+    --espace-xl: clamp(4rem, 10vw, 7rem);
+
+    --largeur-max: 72rem;
+    --rayon: 4px;
+
+    /* Effet néon : un cœur clair et deux halos colorés.
+       Réservé aux blocs sombres (sur fond clair, une lueur ne se voit pas). */
+    --neon-bleu:
+        0 0 2px var(--beton),
+        0 0 10px var(--bleu),
+        0 0 24px var(--bleu),
+        0 0 48px rgb(45 91 255 / .5);
+    --neon-violet:
+        0 0 2px var(--beton),
+        0 0 10px var(--violet),
+        0 0 24px var(--violet),
+        0 0 48px rgb(138 63 252 / .5);
+
+    /* Texture béton : bruit SVG généré par le navigateur (feTurbulence),
+       moins de 1 Ko et net à toutes les tailles. Deux couches : un grain fin
+       et de grandes taches plus douces. */
+    --texture-beton:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .12 0 0 0 0 .12 0 0 0 0 .14 0 0 0 .14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .12 0 0 0 0 .12 0 0 0 0 .14 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23t)'/%3E%3C/svg%3E");
+}
+
+
+/* ==========================================================================
+   3. Base
+   ========================================================================== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+}
+
+/* La remise à zéro ci-dessus décentre les fenêtres <dialog> : on rend le centrage */
+dialog {
+    margin: auto;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--beton);
+    background-image: var(--texture-beton);
+    color: var(--anthracite);
+    font-family: var(--police-texte);
+    font-size: var(--taille-texte);
+    line-height: 1.6;
+}
+
+main {
+    flex: 1; /* le pied de page reste en bas même sur une page courte */
+}
+
+h1,
+h2,
+h3 {
+    font-family: var(--police-titre);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+}
+
+h1 { font-size: var(--taille-h1); }
+h2 { font-size: var(--taille-h2); }
+h3 { font-size: var(--taille-h3); }
+
+img,
+svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+a {
+    color: inherit;
+    text-decoration-color: var(--bleu);
+    text-decoration-thickness: 2px;
+    text-underline-offset: .2em;
+}
+
+a:hover {
+    text-decoration-color: var(--violet);
+}
+
+/* Contour du focus clavier : bleu, visible sur fond clair comme sur fond sombre */
+:focus-visible {
+    outline: 3px solid var(--bleu);
+    outline-offset: 3px;
+}
+
+
+/* ==========================================================================
+   4. Mise en page
+   ========================================================================== */
+.conteneur {
+    width: min(100% - 2rem, var(--largeur-max));
+    margin-inline: auto;
+}
+
+.section {
+    padding-block: var(--espace-xl);
+}
+
+/* Bloc sombre : là où les néons peuvent briller */
+.bloc-sombre {
+    background-color: var(--anthracite);
+    color: var(--beton);
+}
+
+
+/* ==========================================================================
+   5. En-tête et navigation
+   ========================================================================== */
+.entete {
+    position: relative;
+    background-color: var(--anthracite);
+    color: var(--beton);
+    border-bottom: 2px solid var(--bleu);
+    box-shadow: 0 0 18px rgb(45 91 255 / .45); /* le trait bleu « éclaire » le dessous */
+}
+
+.entete__interieur {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--espace-s);
+    padding-block: var(--espace-s);
+}
+
+/* Logo : « SHARP » en néon bleu, « Line » en tag violet */
+.logo {
+    display: inline-flex;
+    align-items: baseline;
+    gap: .35rem;
+    text-decoration: none;
+    line-height: 1;
+}
+
+.logo__sharp {
+    font-family: var(--police-titre);
+    font-size: 2.25rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    text-shadow: var(--neon-bleu);
+}
+
+.logo__line {
+    font-family: var(--police-tag);
+    font-size: 1.5rem;
+    transform: rotate(-6deg);
+    text-shadow: var(--neon-violet);
+}
+
+/* Bouton du menu : caché sans JavaScript (le menu est alors toujours affiché) */
+.nav-bouton {
+    display: none;
+}
+
+.js .nav-bouton {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .55rem .9rem;
+    background: none;
+    border: 1px solid rgb(230 228 224 / .4);
+    border-radius: var(--rayon);
+    color: var(--beton);
+    font: 600 .95rem var(--police-texte);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    cursor: pointer;
+}
+
+/* Icône « burger » dessinée en CSS : un trait + deux pseudo-éléments */
+.nav-bouton__icone,
+.nav-bouton__icone::before,
+.nav-bouton__icone::after {
+    display: block;
+    width: 1.25rem;
+    height: 2px;
+    background-color: currentColor;
+    transition: transform .2s, opacity .2s;
+}
+
+.nav-bouton__icone {
+    position: relative;
+}
+
+.nav-bouton__icone::before,
+.nav-bouton__icone::after {
+    content: "";
+    position: absolute;
+    left: 0;
+}
+
+.nav-bouton__icone::before { top: -6px; }
+.nav-bouton__icone::after  { top: 6px; }
+
+/* Ouvert : le burger devient une croix */
+.nav-bouton[aria-expanded="true"] .nav-bouton__icone {
+    background-color: transparent;
+}
+
+.nav-bouton[aria-expanded="true"] .nav-bouton__icone::before {
+    transform: translateY(6px) rotate(45deg);
+}
+
+.nav-bouton[aria-expanded="true"] .nav-bouton__icone::after {
+    transform: translateY(-6px) rotate(-45deg);
+}
+
+.nav {
+    flex-basis: 100%; /* sur mobile, le menu passe sous le logo */
+}
+
+/* Avec JavaScript, le menu est replié tant que le bouton n'est pas ouvert */
+.js .nav-bouton[aria-expanded="false"] + .nav {
+    display: none;
+}
+
+.nav__liste {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    padding: 0 0 var(--espace-s);
+    list-style: none;
+}
+
+.nav__lien {
+    display: block;
+    padding: .6rem 0;
+    font-weight: 500;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+.nav__lien:hover,
+.nav__lien[aria-current="page"] {
+    text-shadow: var(--neon-bleu);
+}
+
+/* Lien « Prendre rendez-vous » : mis en avant, fond bleu.
+   Texte blanc : contraste 5,2:1 (le béton n'atteint que 4,1:1, sous le seuil de 4,5:1). */
+.nav__lien--rdv {
+    margin-top: var(--espace-xs);
+    padding: .7rem 1.1rem;
+    background-color: var(--bleu);
+    color: #fff;
+    border-radius: var(--rayon);
+    text-align: center;
+    box-shadow: 0 0 16px rgb(45 91 255 / .6);
+}
+
+.nav__lien--rdv:hover,
+.nav__lien--rdv[aria-current="page"] {
+    background-color: var(--violet);
+    box-shadow: 0 0 16px rgb(138 63 252 / .7);
+    text-shadow: none;
+}
+
+/* Grand écran : menu en ligne, toujours visible */
+@media (min-width: 60em) {
+    .entete__interieur {
+        flex-wrap: nowrap;
+    }
+
+    .js .nav-bouton {
+        display: none;
+    }
+
+    .nav,
+    .js .nav-bouton[aria-expanded="false"] + .nav {
+        display: block;
+        flex-basis: auto;
+    }
+
+    .nav__liste {
+        flex-direction: row;
+        align-items: center;
+        gap: var(--espace-m);
+        padding: 0;
+    }
+
+    .nav__lien--rdv {
+        margin-top: 0;
+    }
+}
+
+
+/* ==========================================================================
+   6. Bandeau démo
+   ========================================================================== */
+.bandeau-demo {
+    padding: .55rem 1rem;
+    background-color: var(--violet);
+    color: #fff;  /* blanc sur violet : contraste 5:1 (le béton ne suffit pas) */
+    font-size: .875rem;
+    text-align: center;
+}
+
+
+/* ==========================================================================
+   7. Pied de page
+   ========================================================================== */
+.pied {
+    margin-top: auto;
+    padding-block: var(--espace-l) var(--espace-m);
+    background-color: var(--anthracite);
+    color: var(--beton);
+    border-top: 2px solid var(--violet);
+    box-shadow: 0 0 18px rgb(138 63 252 / .4);
+    font-size: .95rem;
+}
+
+.pied__grille {
+    display: grid;
+    gap: var(--espace-l);
+}
+
+.pied__nom {
+    font-family: var(--police-titre);
+    font-size: 2rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    text-shadow: var(--neon-violet);
+}
+
+.pied__titre {
+    margin-bottom: var(--espace-xs);
+    font-family: var(--police-texte);
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .15em;
+    opacity: .75;
+}
+
+.pied address {
+    font-style: normal;
+}
+
+.pied__liste {
+    padding: 0;
+    list-style: none;
+}
+
+.pied__copyright {
+    width: min(100% - 2rem, var(--largeur-max));
+    margin: var(--espace-l) auto 0;
+    padding-top: var(--espace-m);
+    border-top: 1px solid rgb(230 228 224 / .15);
+    font-size: .8rem;
+    opacity: .75;
+}
+
+@media (min-width: 40em) {
+    .pied__grille {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 60em) {
+    .pied__grille {
+        grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    }
+}
+
+
+/* ==========================================================================
+   8. Utilitaires
+   ========================================================================== */
+
+/* Lien « Aller au contenu » : invisible jusqu'à ce qu'il reçoive le focus clavier */
+.lien-evitement {
+    position: absolute;
+    top: -100px;
+    left: 1rem;
+    z-index: 10;
+    padding: .6rem 1rem;
+    background-color: var(--beton);
+    color: var(--anthracite);
+    font-weight: 700;
+}
+
+.lien-evitement:focus {
+    top: 1rem;
+}
+
+/* Caché à l'écran, mais lu par les lecteurs d'écran */
+.visuellement-cache {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* Image de remplacement (fichier manquant) : bien repérable */
+.image-remplacement {
+    border-radius: var(--rayon);
+}
+
+
+/* ==========================================================================
+   9. Animations réduites
+   Si le visiteur a demandé moins d'animations dans son système, on les coupe.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+    }
+}
