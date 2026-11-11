@@ -28,13 +28,27 @@ function verifier(string $nom, bool $condition): void
 }
 
 
+echo "Temps bloqué (durée + 5 min de battement, arrondi à la dizaine)\n";
+verifier('15 min → 20', dureeBloquee(15) === 20);
+verifier('20 min → 30', dureeBloquee(20) === 30);
+verifier('25 min → 30', dureeBloquee(25) === 30);
+verifier('35 min → 40', dureeBloquee(35) === 40);
+verifier('40 min → 50', dureeBloquee(40) === 50);
+
 echo "Créneaux\n";
-// Karim (1) pris de 10:00 à 10:35, Inès (2) libre
-$libres = creneauxLibres('10:00', '20:00', 20, [1 => [[600, 635]], 2 => []]);
+// Karim (1) bloqué de 10:00 à 10:40 (coupe + barbe), Inès (2) libre ; coupe homme : 20 min, 30 bloquées
+$libres = creneauxLibres('10:00', '20:00', 20, [1 => [[600, 640]], 2 => []]);
 verifier('10:00 : seule Inès est libre', $libres['10:00'] === [2]);
-verifier('10:35 : les deux sont libres', $libres['10:35'] === [1, 2]);
-verifier('10:30 : Karim encore pris (chevauchement)', $libres['10:30'] === [2]);
-verifier('19:40 : dernier créneau (finit à 20:00)', isset($libres['19:40']) && !isset($libres['19:45']));
+verifier('10:35 : Karim encore pris (chevauchement)', $libres['10:35'] === [2]);
+verifier('10:40 : les deux sont libres', $libres['10:40'] === [1, 2]);
+verifier('19:40 : dernier créneau (la coupe finit à 20:00, le battement déborde)',
+    isset($libres['19:40']) && !isset($libres['19:45']));
+
+// Karim pris à 15:00 : une coupe de 20 min doit laisser son battement avant 15:00
+$avant = creneauxLibres('10:00', '20:00', 20, [1 => [[900, 930]]]);
+verifier('14:30 libre (fin 14:50, battement jusqu\'à 15:00)', isset($avant['14:30']));
+verifier('14:35 refusé (le battement mordrait sur 15:00)', !isset($avant['14:35']));
+verifier('15:30 libre juste après le temps bloqué', isset($avant['15:30']) && !isset($avant['15:25']));
 verifier('un créneau toutes les 5 min', isset($libres['10:05']) && !isset($libres['10:02']));
 
 $tot = creneauxLibres('10:00', '20:00', 20, [1 => []], minutes('14:32'));
@@ -85,6 +99,9 @@ $crees = [];
 $premier = enregistrerRendezVous($etat, ['prenom' => 'Test', 'telephone' => '0199000001'], $maintenant);
 $crees[] = $premier['id'] ?? null;
 verifier('premier rendez-vous enregistré', isset($premier['id']));
+$requete = db()->prepare('SELECT TIMESTAMPDIFF(MINUTE, debut, fin) FROM rendez_vous WHERE id = ?');
+$requete->execute([$premier['id'] ?? 0]);
+verifier('coupe de 20 min : 30 min bloquées en base', (int) $requete->fetchColumn() === 30);
 
 $second = enregistrerRendezVous($etat, ['prenom' => 'Test', 'telephone' => '0199000002'], $maintenant);
 $crees[] = $second['id'] ?? null;

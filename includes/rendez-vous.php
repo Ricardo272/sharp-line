@@ -14,6 +14,8 @@ require_once __DIR__ . '/donnees/horaires.php';
 require_once __DIR__ . '/formulaire.php';
 
 const RDV_PAS                = 5;    // un créneau toutes les 5 minutes
+const RDV_BATTEMENT          = 5;    // minutes pour nettoyer, préparer, encaisser (jamais affichées au client)
+const RDV_BLOC               = 10;   // le temps bloqué est arrondi à la dizaine supérieure
 const RDV_HORIZON_JOURS      = 21;   // 3 semaines de jours proposés
 const RDV_DELAI_MINUTES      = 30;   // le jour même : au plus tôt dans 30 min
 const RDV_MAX_A_VENIR_PAR_TEL = 2;
@@ -40,25 +42,38 @@ function heure(int $minutes): string
 }
 
 /**
+ * Temps bloqué dans l'agenda du barber : la vraie durée + le battement,
+ * arrondie à la dizaine supérieure. 15 → 20, 20 → 30, 25 → 30, 35 → 40, 40 → 50.
+ * Le client, lui, ne voit que la vraie durée.
+ */
+function dureeBloquee(int $duree): int
+{
+    return (int) ceil(($duree + RDV_BATTEMENT) / RDV_BLOC) * RDV_BLOC;
+}
+
+/**
  * Créneaux libres d'une journée.
  *
- * @param array $occupes  [barberId => [[debut, fin], …]] en minutes : un tableau,
- *                        même vide, pour chaque barber présent ce jour-là
+ * @param int   $duree    vraie durée de la prestation (le battement est ajouté ici)
+ * @param array $occupes  [barberId => [[debut, fin], …]] en minutes, fin = fin du temps
+ *                        bloqué : un tableau, même vide, pour chaque barber présent ce jour-là
  * @param int   $auPlusTot  minute à partir de laquelle on peut commencer (le jour même)
  * @return array  ['10:00' => [1, 3], …] : heure de début => barbers libres
  */
 function creneauxLibres(string $ouverture, string $fermeture, int $duree, array $occupes, int $auPlusTot = 0): array
 {
     $libres = [];
+    $bloque = dureeBloquee($duree);
     $premier = max(minutes($ouverture), $auPlusTot);
     $premier = (int) ceil($premier / RDV_PAS) * RDV_PAS; // aligné sur les 5 minutes
 
-    // Le rendez-vous doit FINIR avant la fermeture
+    // La vraie prestation doit finir avant la fermeture ; le battement du
+    // dernier client, lui, peut déborder (on range après la fermeture).
     for ($debut = $premier; $debut + $duree <= minutes($fermeture); $debut += RDV_PAS) {
         foreach ($occupes as $barber => $plages) {
             foreach ($plages as [$d, $f]) {
                 // Deux plages se chevauchent si chacune commence avant la fin de l'autre
-                if ($debut < $f && $debut + $duree > $d) {
+                if ($debut < $f && $debut + $bloque > $d) {
                     continue 2; // ce barber est pris : barber suivant
                 }
             }
@@ -397,7 +412,8 @@ function enregistrerRendezVous(array $etat, array $coordonnees, DateTimeImmutabl
             'prestation' => $etat['prestation']['id'],
             'barber'     => $barber,
             'debut'      => $debut->format('Y-m-d H:i:s'),
-            'fin'        => $debut->modify('+' . $etat['duree'] . ' minutes')->format('Y-m-d H:i:s'),
+            // fin = fin du temps bloqué (prestation + battement, arrondi)
+            'fin'        => $debut->modify('+' . dureeBloquee($etat['duree']) . ' minutes')->format('Y-m-d H:i:s'),
             'motif'      => (int) $etat['motif'],
             'prenom'     => $coordonnees['prenom'],
             'telephone'  => $coordonnees['telephone'],

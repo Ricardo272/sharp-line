@@ -91,9 +91,10 @@ CREATE TABLE fermetures (
 
 -- --------------------------------------------------------------------------
 -- Rendez-vous
--- debut et fin : la fin est calculée à la réservation (durée de la prestation,
--- + 5 min si motif). Un créneau est libre si aucun rendez-vous confirmé du
--- même barber ne le chevauche.
+-- debut et fin : la fin est celle du temps BLOQUÉ dans l'agenda : durée de la
+-- prestation (+ 5 min si motif) + 5 min de battement, arrondie à la dizaine
+-- supérieure (voir dureeBloquee()). Un créneau est libre si aucun rendez-vous
+-- confirmé du même barber ne le chevauche.
 -- RGPD : seulement le prénom et le téléphone, pas d'adresse IP. Les lignes sont
 -- supprimées automatiquement un mois après la date (phase 5).
 -- --------------------------------------------------------------------------
