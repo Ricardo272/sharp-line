@@ -27,7 +27,9 @@ require_once __DIR__ . '/includes/header.php';
             <h2>Éditeur du site</h2>
             <p>
                 Ricardo R., développeur web.<br>
-                Directeur de la publication : Ricardo R.
+                Directeur de la publication : Ricardo R.<br>
+                Code source et contact :
+                <a href="https://github.com/Ricardo272/sharp-line" rel="noopener">github.com/Ricardo272/sharp-line</a>.
             </p>
 
             <h2>Hébergement</h2>
