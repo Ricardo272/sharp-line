@@ -62,6 +62,14 @@ function adminConnecte(): ?array
         return null;
     }
 
+    // Compte supprimé entre-temps (outils/creer-admin.php --supprimer) : la session tombe aussitôt
+    $existe = db()->prepare('SELECT 1 FROM admins WHERE id = :id');
+    $existe->execute(['id' => $_SESSION['admin']['id']]);
+    if (!$existe->fetchColumn()) {
+        deconnecter();
+        return null;
+    }
+
     $_SESSION['derniere_activite'] = time();
     return $_SESSION['admin'];
 }

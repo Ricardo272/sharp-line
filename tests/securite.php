@@ -138,6 +138,8 @@ try {
 } finally {
     db()->prepare('DELETE FROM admins WHERE identifiant = ?')->execute(['test-securite']);
 }
+verifier('compte supprimé : sa session ouverte ne donne plus accès',
+    str_contains(requete($base . '/admin/', null, $nouveau ?? '')['entetes']['location'] ?? '', 'admin/connexion.php'));
 
 if (!str_ends_with(parse_url($base, PHP_URL_HOST), '.test')) {
     echo "En ligne\n";
