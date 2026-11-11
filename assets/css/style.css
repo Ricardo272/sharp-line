@@ -10,7 +10,7 @@
      7. Pied de page
      8. Utilitaires
      9. Composants (boutons, filet, titres, cartes, grille, néon, tag)
-    10. Accueil
+    10. Pages (accueil, galerie, contact, 404…)
     11. Animations réduites
    Écrite « mobile d'abord » : les règles de base visent le téléphone,
    les @media (min-width) ajoutent la mise en page des grands écrans.
@@ -752,39 +752,52 @@ a:hover {
 
 
 /* ==========================================================================
-   10. Accueil
+   10. Pages
    ========================================================================== */
 
-/* Mobile : texte puis image, l'une sous l'autre */
-.intro {
-    display: grid;
-    gap: var(--espace-l);
-    align-items: center;
+/* --- Éléments communs aux pages ---------------------------------------- */
+.conteneur--etroit {
+    width: min(100% - 2rem, 46rem);
 }
 
-.intro__slogan {
-    margin-block: var(--espace-s) var(--espace-m);
-    font-size: 1.25rem;
-    font-weight: 500;
+.section--serree {
+    padding-top: 0;
 }
 
-.intro__atouts {
+.chapeau {
+    max-width: 40rem;
+    font-size: 1.15rem;
+}
+
+.lien-suite {
+    margin-top: var(--espace-m);
+    font-weight: 600;
+}
+
+.lien-suite a::after {
+    content: " →";
+}
+
+.groupe-boutons--centre {
+    justify-content: center;
+}
+
+/* Liste d'atouts : chaque ligne précédée d'un trait bleu, comme un coup de tondeuse */
+.atouts {
     display: grid;
     gap: var(--espace-xs);
-    margin-bottom: var(--espace-m);
     padding: 0;
     list-style: none;
 }
 
-/* Chaque atout précédé d'un trait bleu, comme un coup de tondeuse */
-.intro__atouts li {
+.atouts li {
     display: flex;
     align-items: center;
     gap: .75rem;
     font-weight: 500;
 }
 
-.intro__atouts li::before {
+.atouts li::before {
     content: "";
     flex: none;
     width: 1.5rem;
@@ -792,22 +805,269 @@ a:hover {
     background-color: var(--bleu);
 }
 
-.intro__image {
-    width: 100%;
-    max-width: 16rem;  /* l'image ne mange plus tout l'écran */
-    justify-self: center;
+.liste-simple {
+    padding: 0;
+    list-style: none;
 }
 
-/* Bureau : deux colonnes, texte plus large que l'image */
+/* Encadré : bordure gauche bleue, sur fond clair */
+.encadre {
+    margin-top: var(--espace-l);
+    padding: var(--espace-m);
+    border: 1px solid rgb(30 31 36 / .25);
+    border-left: 4px solid var(--bleu);
+    border-radius: var(--rayon);
+}
+
+.encadre__titre {
+    margin-bottom: var(--espace-s);
+    font-size: 1.75rem;
+}
+
+/* Texte long (mentions légales) */
+.prose h2 {
+    margin-block: var(--espace-l) var(--espace-xs);
+    font-size: 2rem;
+}
+
+.prose p + p,
+.prose ul {
+    margin-top: var(--espace-s);
+}
+
+.prose ul {
+    padding-left: 1.25rem;
+}
+
+.prose__maj {
+    margin-top: var(--espace-l) !important;
+    font-size: .9rem;
+    opacity: .75;
+}
+
+/* --- Accueil : bannière ------------------------------------------------- */
+.banniere {
+    padding-block: var(--espace-l) var(--espace-xl);
+}
+
+/* Mobile : texte puis image, l'une sous l'autre */
+.banniere__grille {
+    display: grid;
+    gap: var(--espace-l);
+    align-items: center;
+}
+
+.banniere__titre {
+    text-shadow: var(--neon-bleu);
+}
+
+.banniere__slogan {
+    margin-block: var(--espace-s) var(--espace-m);
+    font-size: 1.35rem;
+    font-weight: 500;
+}
+
+.banniere .atouts {
+    margin-bottom: var(--espace-m);
+}
+
+.banniere__image {
+    width: 100%;
+    max-width: 16rem;
+    justify-self: center;
+    border-radius: var(--rayon);
+    box-shadow: 0 0 0 2px var(--violet), 0 0 28px rgb(138 63 252 / .55);
+}
+
 @media (min-width: 48em) {
-    .intro {
+    .banniere__grille {
         grid-template-columns: 1.3fr 1fr;
     }
 
-    .intro__image {
+    .banniere__image {
         max-width: 22rem;
         justify-self: end;
     }
+}
+
+/* --- Appel au rendez-vous (bloc néon) ---------------------------------- */
+.appel-rdv__infos {
+    display: grid;
+    gap: .25rem;
+    margin-bottom: var(--espace-m);
+    padding: 0;
+    list-style: none;
+}
+
+/* --- Équipe ------------------------------------------------------------- */
+.carte-barber__specialite {
+    font-weight: 600;
+}
+
+/* --- Galerie : vignettes carrées --------------------------------------- */
+.vignettes {
+    display: grid;
+    gap: var(--espace-s);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+    padding: 0;
+    list-style: none;
+}
+
+/* Aperçu de l'accueil : 2 colonnes en mobile, 4 en bureau */
+.vignettes--apercu {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 48em) {
+    .vignettes--apercu {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.vignettes img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: var(--rayon);
+}
+
+.photo figcaption {
+    margin-top: .4rem;
+    font-size: .9rem;
+}
+
+/* Bouton créé par galerie.js autour de chaque photo */
+.photo__bouton {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+}
+
+.photo__bouton img {
+    transition: box-shadow .2s;
+}
+
+.photo__bouton:hover img {
+    box-shadow: 0 0 0 3px var(--bleu);
+}
+
+/* Fenêtre d'agrandissement */
+.agrandissement {
+    max-width: min(92vw, 44rem);
+    max-height: 92vh;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--beton);
+}
+
+.agrandissement::backdrop {
+    background-color: rgb(30 31 36 / .92);
+}
+
+.agrandissement__contenu {
+    display: grid;
+    gap: var(--espace-s);
+    justify-items: center;
+    padding: var(--espace-s);
+}
+
+.agrandissement__image {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 72vh;
+    border-radius: var(--rayon);
+    box-shadow: 0 0 0 2px var(--bleu), 0 0 32px rgb(45 91 255 / .6);
+}
+
+.agrandissement__legende {
+    text-align: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .agrandissement[open] {
+        animation: agrandissement-apparition .25s ease-out;
+    }
+}
+
+@keyframes agrandissement-apparition {
+    from { opacity: 0; transform: scale(.96); }
+}
+
+/* --- Contact ------------------------------------------------------------ */
+.contact {
+    display: grid;
+    gap: var(--espace-l);
+}
+
+.contact__titre {
+    margin-block: var(--espace-m) var(--espace-xs);
+    font-size: 1.75rem;
+}
+
+.contact__titre:first-child {
+    margin-top: 0;
+}
+
+.contact address {
+    font-style: normal;
+}
+
+.contact .groupe-boutons {
+    margin-top: var(--espace-m);
+}
+
+.plan {
+    width: 100%;
+    border-radius: var(--rayon);
+}
+
+/* Le passage et le salon brillent comme des néons */
+.plan__passage {
+    filter: drop-shadow(0 0 6px #8A3FFC);
+}
+
+.plan__salon {
+    filter: drop-shadow(0 0 6px #2D5BFF);
+}
+
+.contact__plan figcaption {
+    margin-top: var(--espace-xs);
+    font-size: .9rem;
+}
+
+@media (min-width: 48em) {
+    .contact {
+        grid-template-columns: 1fr 1.2fr;
+        align-items: start;
+    }
+}
+
+/* --- 404 ---------------------------------------------------------------- */
+.erreur {
+    display: grid;
+    align-items: center;
+}
+
+.erreur__contenu {
+    text-align: center;
+}
+
+.erreur__code {
+    font-family: var(--police-titre);
+    font-size: clamp(7rem, 30vw, 14rem);
+    line-height: 1;
+    text-shadow: var(--neon-violet);
+    animation: neon-allumage 1.8s ease-out both;
+}
+
+.erreur h1 {
+    font-size: var(--taille-h2);
+    margin-bottom: var(--espace-s);
 }
 
 

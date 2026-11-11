@@ -53,5 +53,8 @@ $horaires = resumerHoraires($site['horaires']);
 </footer>
 
 <script src="<?= e(asset('assets/js/menu.js')) ?>" defer></script>
+<?php if (!empty($pageJs)): // script propre à une page (ex. galerie) ?>
+<script src="<?= e(asset('assets/js/' . $pageJs . '.js')) ?>" defer></script>
+<?php endif; ?>
 </body>
 </html>
